@@ -14,14 +14,11 @@ IShaperFeed = 0x64
 IComp = 0x78
 VThreshold2 = 0x0
 
-numberOfEvents = 1000
-
-
-
+numberOfEvents = 100
 
 
 # Create window
-window = Window("S-Curves")
+window = Window("Latency Scan")
 
 # Get GLIB access
 glib = GLIB('192.168.0.115', 'glibAddrTable.dat')
@@ -69,7 +66,7 @@ window.printBox(0, 15, 40, "VThreshold2: ", "Default", "right")
 window.printBox(40, 15, 40, hex(VThreshold2), "Default", "left")
 
 # Design
-window.printLine(17, "Press [s] to start scanning VThreshold1", "Success", "center")
+window.printLine(17, "Press [s] to start scanning the latency", "Success", "center")
 
 # Wait for Start signal
 while(True):
@@ -84,7 +81,7 @@ glib.set('vfat2_8_ctrl0', 0x37)
 glib.set('opto_1_66', 0x1)
 
 # Design
-window.printBox(0, 19, 40, "VThreshold1: ", "Default", "right")
+window.printBox(0, 19, 40, "Latency: ", "Default", "right")
 window.printBox(0, 20, 40, "Percentage: ", "Default", "right")
 
 # Create a plot and its data
@@ -92,25 +89,19 @@ plt.ion()
 dataPoints = []
 
 # Loop over Threshold 1
-for VThreshold1 in range(0, 255):
+for latency in range(0, 50):
 
     # Design
-    window.printBox(40, 19, 40, hex(VThreshold1), "Default", "left")
+    window.printBox(40, 19, 40, hex(latency), "Default", "left")
 
     # Set Threshold 1
-    glib.set('vfat2_8_vthresdhol1', VThreshold1)
+    glib.set('vfat2_8_latency', latency)
 
     # Send Resync signal
     glib.set('opto_1_66', 0x1)
 
     # Empty tracking fifo
     glib.set('info_1_12', 0x0)
-
-    # Update plot
-    plt.plot(dataPoints)
-    plt.axis([0, 255, 0, 1])
-    plt.draw()
-    plt.clf()
 
     # Efficiency variable
     hitCount = 0.
@@ -119,13 +110,8 @@ for VThreshold1 in range(0, 255):
     for i in range(0, numberOfEvents):
 
         # Design
-        percentage = (VThreshold1 * numberOfEvents + i) / (numberOfEvents * 255.) * 100.
+        percentage = (latency * numberOfEvents + i) / (numberOfEvents * 50.) * 100.
         window.printBox(40, 20, 40, str(percentage)[:5] + "%", "Default", "left")
-
-        # Send 2 LV1A signal (to be sure...)
-        glib.set('opto_1_64', 0x1)
-        glib.set('opto_1_64', 0x1)
-        glib.set('opto_1_64', 0x1)
 
         # Get a tracking packet (with a limit)
         while (True):
@@ -136,14 +122,23 @@ for VThreshold1 in range(0, 255):
             if (isNewData == 0x1):
                 break
 
-        packet1 = glib.get("tracking_1_3")
-        strip = (0x00010000 & packet1) >> 16
+        packet1 = glib.get("tracking_1_1") >> 16
+        packet2 = glib.get("tracking_1_2")
+        packet3 = glib.get("tracking_1_3")
+        packet4 = glib.get("tracking_1_4")
+        packet5 = 0x0000ffff & glib.get("tracking_1_5")
 
-        if (strip == 1):
+        if (packet1 + packet2 + packet3 + packet4 + packet5 != 0):
             hitCount += 1.
 
     # Add data
     dataPoints.append(hitCount / numberOfEvents)
+
+    # Update plot
+    plt.plot(dataPoints)
+    plt.axis([0, 50, 0, 1])
+    plt.draw()
+    plt.clf()
 
     # Wait a bit
     time.sleep(0.1)

@@ -17,7 +17,7 @@ class Window():
         # Do not require Enter to be pressed to get data
         curses.cbreak()
         # Let Curses handle special keys
-        self.window.keypad(1)
+        # self.window.keypad(1)
         # Set signal for terminal resize
         signal.signal(signal.SIGWINCH, self.resizeSignal)
         # Set signal for exit
@@ -80,6 +80,13 @@ class Window():
         # Print the string
         self.printString(x, y, text, color)
 
+    # Print error
+    def printError(self, string):
+        # Get the screen size
+        height, width = self.window.getmaxyx()
+        # Print the string
+        self.printString(0, height - 1, string, "Error")
+
     # Print a full line on the screen (auto-fill)
     def printLine(self, y, string, color = "Default", aligned = "left"):
         # Get the screen size
@@ -112,15 +119,29 @@ class Window():
         return self.window.getstr(y, x, length)
 
     # Create an input field on the screen and return its value
-    def getField(self, x, y, length = 50):
+    def getText(self, x, y, length = 50):
         # Enable echo mode
         curses.echo()
         # Get string
-        string = self.window.getstr(y, x, length)
+        while(True):
+            string = self.window.getstr(y, x, length)
+            if (string.isalnum() or len(string) == 0):
+                break
         # Disable echo mode
         curses.noecho()
         # Return string
-        return string
+        if (len(string) == 0):
+            return False
+        else:
+            return string
+
+    # Get an integer
+    def getInt(self, x, y, length = 50):
+        value = self.getText(x, y, length)
+        if (value == False):
+            return -1
+        else:
+            return int(value)
 
     # Wait for quit signal
     def waitQuit(self):

@@ -336,279 +336,104 @@ flash_param_bank        08780000    ffffffff     1     1     512Kword
 *------------------------------------------------------------------------------------------
 * RegName               RegAddr     RegMask      R     W     Description
 *------------------------------------------------------------------------------------------
-user_ipb_regs           40000000    ffffffff     1     1
-user_ipb_stat_regs      40000000    ffffffff     1     1     example_status_regs
-user_ipb_ctrl_regs      40000040    ffffffff     1     1     example_control_regs
-*
-user_wb_regs            80000000    ffffffff     1     1
 
-***********
+*------------------------------------------------------------------------------------------
+* Tracking data
+*------------------------------------------------------------------------------------------
 
-tracking_1_0              40020100    ffffffff     1     0
-tracking_1_1              40020101    ffffffff     1     0
-tracking_1_2              40020102    ffffffff     1     0
-tracking_1_3              40020103    ffffffff     1     0
-tracking_1_4              40020104    ffffffff     1     0
-tracking_1_5              40020105    ffffffff     1     0
-tracking_1_6              40020106    ffffffff     1     0
+glib_request_tracking_data      40020100    ffffffff     1     0
+glib_tracking_data_1            40020101    ffffffff     1     0
+glib_tracking_data_2            40020102    ffffffff     1     0
+glib_tracking_data_3            40020103    ffffffff     1     0
+glib_tracking_data_4            40020104    ffffffff     1     0
+glib_tracking_data_5            40020105    ffffffff     1     0
+glib_tracking_data_6            40020106    ffffffff     1     0
+glib_tracking_data_7            40020107    ffffffff     1     0
 
-info_1_0           40040100    ffffffff     1     1
-info_1_1           40040101    ffffffff     1     1
-info_1_2           40040102    ffffffff     1     1
-info_1_3           40040103    ffffffff     1     1
-info_1_4           40040104    ffffffff     1     1
-info_1_5           40040105    ffffffff     1     1
-info_1_6           40040106    ffffffff     1     1
-info_1_7           40040107    ffffffff     1     1
-info_1_8           40040108    ffffffff     1     1
-info_1_9           40040109    ffffffff     1     1
-info_1_10           4004010a    ffffffff     1     1
-info_1_11           4004010b    ffffffff     1     1
-info_1_12           4004010c    ffffffff     1     1
-info_1_13           4004010d    ffffffff     1     1
-info_1_14           4004010e    ffffffff     1     1
-info_1_15           4004010f    ffffffff     1     1
-info_1_16           40040110    ffffffff     1     1
-info_1_17           40040111    ffffffff     1     1
-info_1_18           40040112    ffffffff     1     1
-info_1_19           40040113    ffffffff     1     1
-info_1_20           40040114    ffffffff     1     1
-info_1_21           40040115    ffffffff     1     1
-info_1_22           40040116    ffffffff     1     1
-info_1_23           40040117    ffffffff     1     1
-info_1_24           40040118    ffffffff     1     1
-info_1_25           40040119    ffffffff     1     1
-info_1_26           4004011a    ffffffff     1     1
-info_1_27           4004011b    ffffffff     1     1
-info_1_28           4004011c    ffffffff     1     1
-info_1_29           4004011d    ffffffff     1     1
-info_1_30           4004011e    ffffffff     1     1
-info_1_31           4004011f    ffffffff     1     1
-info_1_32           40040120    ffffffff     1     1
-info_1_33           40040121    ffffffff     1     1
-info_1_34           40040122    ffffffff     1     1
-info_1_35           40040123    ffffffff     1     1
-info_1_36           40040124    ffffffff     1     1
-info_1_37           40040125    ffffffff     1     1
-info_1_38           40040126    ffffffff     1     1
-info_1_39           40040127    ffffffff     1     1
-info_1_40           40040128    ffffffff     1     1
-info_1_41           40040129    ffffffff     1     1
-info_1_42           4004012a    ffffffff     1     1
-info_1_43           4004012b    ffffffff     1     1
-info_1_44           4004012c    ffffffff     1     1
-info_1_45           4004012d    ffffffff     1     1
-info_1_46           4004012e    ffffffff     1     1
-info_1_47           4004012f    ffffffff     1     1
-info_1_48           40040130    ffffffff     1     1
-info_1_49           40040131    ffffffff     1     1
-info_1_50           40040132    ffffffff     1     1
-info_1_51           40040133    ffffffff     1     1
-info_1_52           40040134    ffffffff     1     1
-info_1_53           40040135    ffffffff     1     1
-info_1_54           40040136    ffffffff     1     1
-info_1_55           40040137    ffffffff     1     1
-info_1_56           40040138    ffffffff     1     1
-info_1_57           40040139    ffffffff     1     1
-info_1_58           4004013a    ffffffff     1     1
-info_1_59           4004013b    ffffffff     1     1
-info_1_60           4004013c    ffffffff     1     1
-info_1_61           4004013d    ffffffff     1     1
-info_1_62           4004013e    ffffffff     1     1
-info_1_63           4004013f    ffffffff     1     1
-info_1_64           40040140    ffffffff     1     1
-info_1_65           40040141    ffffffff     1     1
-info_1_66           40040142    ffffffff     1     1
-info_1_67           40040143    ffffffff     1     1
-info_1_68           40040144    ffffffff     1     1
-info_1_69           40040145    ffffffff     1     1
-info_1_70           40040146    ffffffff     1     1
-info_1_71           40040147    ffffffff     1     1
-info_1_72           40040148    ffffffff     1     1
-info_1_73           40040149    ffffffff     1     1
-info_1_74           4004014a    ffffffff     1     1
-info_1_75           4004014b    ffffffff     1     1
-info_1_76           4004014c    ffffffff     1     1
-info_1_77           4004014d    ffffffff     1     1
-info_1_78           4004014e    ffffffff     1     1
-info_1_79           4004014f    ffffffff     1     1
-info_1_80           40040150    ffffffff     1     1
-info_1_81           40040151    ffffffff     1     1
-info_1_82           40040152    ffffffff     1     1
-info_1_83           40040153    ffffffff     1     1
-info_1_84           40040154    ffffffff     1     1
-info_1_85           40040155    ffffffff     1     1
-info_1_86           40040156    ffffffff     1     1
-info_1_87           40040157    ffffffff     1     1
-info_1_88           40040158    ffffffff     1     1
-info_1_89           40040159    ffffffff     1     1
-info_1_90           4004015a    ffffffff     1     1
-info_1_91           4004015b    ffffffff     1     1
-info_1_92           4004015c    ffffffff     1     1
-info_1_93           4004015d    ffffffff     1     1
-info_1_94           4004015e    ffffffff     1     1
-info_1_95           4004015f    ffffffff     1     1
-info_1_96           40040160    ffffffff     1     1
-info_1_97           40040161    ffffffff     1     1
-info_1_98           40040162    ffffffff     1     1
-info_1_99           40040163    ffffffff     1     1
-info_1_100           40040164    ffffffff     1     1
-info_1_101           40040165    ffffffff     1     1
-info_1_102           40040166    ffffffff     1     1
-info_1_103           40040167    ffffffff     1     1
-info_1_104           40040168    ffffffff     1     1
-info_1_105           40040169    ffffffff     1     1
-info_1_106           4004016a    ffffffff     1     1
-info_1_107           4004016b    ffffffff     1     1
-info_1_108           4004016c    ffffffff     1     1
-info_1_109           4004016d    ffffffff     1     1
-info_1_110           4004016e    ffffffff     1     1
-info_1_111           4004016f    ffffffff     1     1
-info_1_112           40040170    ffffffff     1     1
-info_1_113           40040171    ffffffff     1     1
-info_1_114           40040172    ffffffff     1     1
-info_1_115           40040173    ffffffff     1     1
-info_1_116           40040174    ffffffff     1     1
-info_1_117           40040175    ffffffff     1     1
-info_1_118           40040176    ffffffff     1     1
-info_1_119           40040177    ffffffff     1     1
-info_1_120           40040178    ffffffff     1     1
-info_1_121           40040179    ffffffff     1     1
-info_1_122           4004017a    ffffffff     1     1
-info_1_123           4004017b    ffffffff     1     1
-info_1_124           4004017c    ffffffff     1     1
-info_1_125           4004017d    ffffffff     1     1
-info_1_126           4004017e    ffffffff     1     1
-info_1_127           4004017f    ffffffff     1     1
+glib_tracking_data_occupancy    4004010b    ffffffff     1     0
+glib_empty_tracking_data        4004010c    ffffffff     0     1
 
-opto_1_0           40030100    ffffffff     1     1
-opto_1_1           40030101    ffffffff     1     1
-opto_1_2           40030102    ffffffff     1     1
-opto_1_3           40030103    ffffffff     1     1
-opto_1_4           40030104    ffffffff     1     1
-opto_1_5           40030105    ffffffff     1     1
-opto_1_6           40030106    ffffffff     1     1
-opto_1_7           40030107    ffffffff     1     1
-opto_1_8           40030108    ffffffff     1     1
-opto_1_9           40030109    ffffffff     1     1
-opto_1_10           4003010a    ffffffff     1     1
-opto_1_11           4003010b    ffffffff     1     1
-opto_1_12           4003010c    ffffffff     1     1
-opto_1_13           4003010d    ffffffff     1     1
-opto_1_14           4003010e    ffffffff     1     1
-opto_1_15           4003010f    ffffffff     1     1
-opto_1_16           40030110    ffffffff     1     1
-opto_1_17           40030111    ffffffff     1     1
-opto_1_18           40030112    ffffffff     1     1
-opto_1_19           40030113    ffffffff     1     1
-opto_1_20           40030114    ffffffff     1     1
-opto_1_21           40030115    ffffffff     1     1
-opto_1_22           40030116    ffffffff     1     1
-opto_1_23           40030117    ffffffff     1     1
-opto_1_24           40030118    ffffffff     1     1
-opto_1_25           40030119    ffffffff     1     1
-opto_1_26           4003011a    ffffffff     1     1
-opto_1_27           4003011b    ffffffff     1     1
-opto_1_28           4003011c    ffffffff     1     1
-opto_1_29           4003011d    ffffffff     1     1
-opto_1_30           4003011e    ffffffff     1     1
-opto_1_31           4003011f    ffffffff     1     1
-opto_1_32           40030120    ffffffff     1     1
-opto_1_33           40030121    ffffffff     1     1
-opto_1_34           40030122    ffffffff     1     1
-opto_1_35           40030123    ffffffff     1     1
-opto_1_36           40030124    ffffffff     1     1
-opto_1_37           40030125    ffffffff     1     1
-opto_1_38           40030126    ffffffff     1     1
-opto_1_39           40030127    ffffffff     1     1
-opto_1_40           40030128    ffffffff     1     1
-opto_1_41           40030129    ffffffff     1     1
-opto_1_42           4003012a    ffffffff     1     1
-opto_1_43           4003012b    ffffffff     1     1
-opto_1_44           4003012c    ffffffff     1     1
-opto_1_45           4003012d    ffffffff     1     1
-opto_1_46           4003012e    ffffffff     1     1
-opto_1_47           4003012f    ffffffff     1     1
-opto_1_48           40030130    ffffffff     1     1
-opto_1_49           40030131    ffffffff     1     1
-opto_1_50           40030132    ffffffff     1     1
-opto_1_51           40030133    ffffffff     1     1
-opto_1_52           40030134    ffffffff     1     1
-opto_1_53           40030135    ffffffff     1     1
-opto_1_54           40030136    ffffffff     1     1
-opto_1_55           40030137    ffffffff     1     1
-opto_1_56           40030138    ffffffff     1     1
-opto_1_57           40030139    ffffffff     1     1
-opto_1_58           4003013a    ffffffff     1     1
-opto_1_59           4003013b    ffffffff     1     1
-opto_1_60           4003013c    ffffffff     1     1
-opto_1_61           4003013d    ffffffff     1     1
-opto_1_62           4003013e    ffffffff     1     1
-opto_1_63           4003013f    ffffffff     1     1
-opto_1_64           40030140    ffffffff     1     1
-opto_1_65           40030141    ffffffff     1     1
-opto_1_66           40030142    ffffffff     1     1
-opto_1_67           40030143    ffffffff     1     1
-opto_1_68           40030144    ffffffff     1     1
-opto_1_69           40030145    ffffffff     1     1
-opto_1_70           40030146    ffffffff     1     1
-opto_1_71           40030147    ffffffff     1     1
-opto_1_72           40030148    ffffffff     1     1
-opto_1_73           40030149    ffffffff     1     1
-opto_1_74           4003014a    ffffffff     1     1
-opto_1_75           4003014b    ffffffff     1     1
-opto_1_76           4003014c    ffffffff     1     1
-opto_1_77           4003014d    ffffffff     1     1
-opto_1_78           4003014e    ffffffff     1     1
-opto_1_79           4003014f    ffffffff     1     1
-opto_1_80           40030150    ffffffff     1     1
-opto_1_81           40030151    ffffffff     1     1
-opto_1_82           40030152    ffffffff     1     1
-opto_1_83           40030153    ffffffff     1     1
-opto_1_84           40030154    ffffffff     1     1
-opto_1_85           40030155    ffffffff     1     1
-opto_1_86           40030156    ffffffff     1     1
-opto_1_87           40030157    ffffffff     1     1
-opto_1_88           40030158    ffffffff     1     1
-opto_1_89           40030159    ffffffff     1     1
-opto_1_90           4003015a    ffffffff     1     1
-opto_1_91           4003015b    ffffffff     1     1
-opto_1_92           4003015c    ffffffff     1     1
-opto_1_93           4003015d    ffffffff     1     1
-opto_1_94           4003015e    ffffffff     1     1
-opto_1_95           4003015f    ffffffff     1     1
-opto_1_96           40030160    ffffffff     1     1
-opto_1_97           40030161    ffffffff     1     1
-opto_1_98           40030162    ffffffff     1     1
-opto_1_99           40030163    ffffffff     1     1
-opto_1_100           40030164    ffffffff     1     1
-opto_1_101           40030165    ffffffff     1     1
-opto_1_102           40030166    ffffffff     1     1
-opto_1_103           40030167    ffffffff     1     1
-opto_1_104           40030168    ffffffff     1     1
-opto_1_105           40030169    ffffffff     1     1
-opto_1_106           4003016a    ffffffff     1     1
-opto_1_107           4003016b    ffffffff     1     1
-opto_1_108           4003016c    ffffffff     1     1
-opto_1_109           4003016d    ffffffff     1     1
-opto_1_110           4003016e    ffffffff     1     1
-opto_1_111           4003016f    ffffffff     1     1
-opto_1_112           40030170    ffffffff     1     1
-opto_1_113           40030171    ffffffff     1     1
-opto_1_114           40030172    ffffffff     1     1
-opto_1_115           40030173    ffffffff     1     1
-opto_1_116           40030174    ffffffff     1     1
-opto_1_117           40030175    ffffffff     1     1
-opto_1_118           40030176    ffffffff     1     1
-opto_1_119           40030177    ffffffff     1     1
-opto_1_120           40030178    ffffffff     1     1
-opto_1_121           40030179    ffffffff     1     1
-opto_1_122           4003017a    ffffffff     1     1
-opto_1_123           4003017b    ffffffff     1     1
-opto_1_124           4003017c    ffffffff     1     1
-opto_1_125           4003017d    ffffffff     1     1
-opto_1_126           4003017e    ffffffff     1     1
-opto_1_127           4003017f    ffffffff     1     1
+*------------------------------------------------------------------------------------------
+* Trigger data
+*------------------------------------------------------------------------------------------
+
+glib_request_trigger_data       40050000    ffffffff     1     0
+glib_empty_trigger_data         40050000    ffffffff     0     1
+
+*------------------------------------------------------------------------------------------
+* GLIB registers
+*------------------------------------------------------------------------------------------
+
+glib_error_counter              40040100    ffffffff     1     0
+glib_vfat2_rx_counter           40040101    ffffffff     1     0
+glib_vfat2_tx_counter           40040102    ffffffff     1     0
+glib_reg_rx_counter             40040103    ffffffff     1     0
+glib_reg_tx_counter             40040104    ffffffff     1     0
+
+glib_reset_error_counter        40040105    ffffffff     0     1
+glib_reset_vfat2_rx_counter     40040106    ffffffff     0     1
+glib_reset_vfat2_tx_counter     40040107    ffffffff     0     1
+glib_reset_reg_rx_counter       40040108    ffffffff     0     1
+glib_reset_reg_tx_counter       40040109    ffffffff     0     1
+
+glib_firmware_version           4004010a    ffffffff     1     0
+
+*------------------------------------------------------------------------------------------
+* OptoHybrid registers
+*------------------------------------------------------------------------------------------
+
+oh_error_counter                40030100    ffffffff     1     0
+oh_vfat2_rx_counter             40030101    ffffffff     1     0
+oh_vfat2_tx_counter             40030102    ffffffff     1     0
+oh_reg_rx_counter               40030103    ffffffff     1     0
+oh_reg_tx_counter               40030104    ffffffff     1     0
+
+oh_reset_error_counter          40030105    ffffffff     0     1
+oh_reset_vfat2_rx_counter       40030106    ffffffff     0     1
+oh_reset_vfat2_tx_counter       40030107    ffffffff     0     1
+oh_reset_reg_rx_counter         40030108    ffffffff     0     1
+oh_reset_reg_tx_counter         40030109    ffffffff     0     1
+
+oh_lv1a                         40030140    ffffffff     0     1
+oh_calpulse                     40030141    ffffffff     0     1
+oh_resync                       40030142    ffffffff     0     1
+oh_bc0                          40030143    ffffffff     0     1
+oh_lv1a_and_calpulse            40030144    ffffffff     0     1
+oh_trigger_source               40030145    ffffffff     1     1
+oh_sbit_select                  40030146    ffffffff     1     1
+
+oh_vfat2_src_select             4003014b    ffffffff     1     1
+oh_vfat2_fallback               4003014c    ffffffff     1     1
+oh_cdce_src_select              4003014d    ffffffff     1     1
+oh_cdce_fallback                4003014e    ffffffff     1     1
+oh_fpga_pll_locked              4003014f    ffffffff     1     0
+oh_cdce_pll_locked              40030150    ffffffff     1     0
+oh_rec_pll_locked               40030151    ffffffff     1     0
+
+oh_adc_v                        40030155    ffffffff     1     0
+oh_adc_i                        40030156    ffffffff     1     0
+oh_firmware_version             40030157    ffffffff     1     0
+
+oh_ext_lv1a_counter             4003015a    ffffffff     1     0
+oh_int_lv1a_counter             4003015b    ffffffff     1     0
+oh_del_lv1a_counter             4003015c    ffffffff     1     0
+oh_lv1a_counter                 4003015d    ffffffff     1     0
+oh_int_calpulse_counter         4003015e    ffffffff     1     0
+oh_del_calpulse_counter         4003015f    ffffffff     1     0
+oh_calpulse_counter             40030160    ffffffff     1     0
+oh_resync_counter               40030161    ffffffff     1     0
+oh_bc0_counter                  40030162    ffffffff     1     0
+oh_bx_counter                   40030163    ffffffff     1     0
+
+oh_reset_ext_lv1a_counter       40030166    ffffffff     0     1
+oh_reset_int_lv1a_counter       40030167    ffffffff     0     1
+oh_reset_del_lv1a_counter       40030168    ffffffff     0     1
+oh_reset_lv1a_counter           40030169    ffffffff     0     1
+oh_reset_int_calpulse_counter   4003016a    ffffffff     0     1
+oh_reset_del_calpulse_counter   4003016b    ffffffff     0     1
+oh_reset_calpulse_counter       4003016c    ffffffff     0     1
+oh_reset_resync_counter         4003016d    ffffffff     0     1
+oh_reset_bc0_counter            4003016e    ffffffff     0     1
 
 ************* VFAT2 #0*************
 

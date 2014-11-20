@@ -1,7 +1,7 @@
 import sys, os, time, signal, random
 
 # Get IPBus
-ipbus_path = os.path.dirname(os.path.abspath(__file__)) + "/src"
+ipbus_path = os.path.dirname(os.path.abspath(__file__)) + "/ipbus"
 sys.path.append(ipbus_path)
 from PyChipsUser import *
 
@@ -9,11 +9,16 @@ from PyChipsUser import *
 class GLIB:
 
     ipbus = False
+    window = False
 
     # Create IPBus
     def __init__(self, ipaddress, table):
         ipbusAddrTable = AddressTable(table)
         self.ipbus = ChipsBusUdp(ipbusAddrTable, ipaddress, 50001)
+
+    # Set window
+    def setWindow(self, window):
+        self.window = window
 
     # Read operation
     def get(self, register):
@@ -23,6 +28,7 @@ class GLIB:
                 return controlChar
             except ChipsException, e:
                 pass
+        self.printError("Could not read " + register)
         return False
 
     # Write operation
@@ -33,5 +39,18 @@ class GLIB:
                 return True
             except ChipsException, e:
                 pass
+        self.printError("Could not write " + register)
         return False
 
+    # Read VFAT2 register
+    def getVFAT2(self, num, register):
+        return self.get('vfat2_' + str(num) + '_' + register)
+
+    # Write VFAT2 register
+    def setVFAT2(self, num, register, value):
+        return self.set('vfat2_' + str(num) + '_' + register, value)
+
+    # Print error
+    def printError(self, error):
+        if (self.window != False):
+            self.window.printError(error)
