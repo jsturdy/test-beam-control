@@ -24,11 +24,12 @@ class Window():
         signal.signal(signal.SIGINT, self.quitSignal)
         # Define basic colors
         self.defineColor("Default", 0, -1)
-        self.defineColor("Title", 231, 4)
+        self.defineColor("Title", 231, 0)
         self.defineColor("Info", 231, 12)
         self.defineColor("Error", 231, 1)
         self.defineColor("Warning", 231, 3)
         self.defineColor("Success", 231, 2)
+        self.defineColor("Input", 0, 11)
         # Draw title
         self.drawTitle(title)
 
@@ -111,19 +112,42 @@ class Window():
         self.window.refresh()
 
     # Get a singel character
-    def getChar(self):
+    def getChr(self):
         return self.window.getch()
 
     # Get a string
     def getString(self, length = 50):
         return self.window.getstr(y, x, length)
 
-    # Create an input field on the screen and return its value
-    def getText(self, x, y, length = 50):
+    # Get a character
+    def getChar(self, x, y):
         # Enable echo mode
         curses.echo()
         # Get string
         while(True):
+            # Mask previous text
+            self.printBox(x, y, 1, " ", "Default")
+            # Get text
+            string = self.window.getstr(y, x, 1)
+            if (string.isalnum() or len(string) == 0):
+                break
+        # Disable echo mode
+        curses.noecho()
+        # Return string
+        if (len(string) == 0):
+            return False
+        else:
+            return string
+
+    # Get a string
+    def getString(self, x, y, length = 50):
+        # Enable echo mode
+        curses.echo()
+        # Get string
+        while(True):
+            # Mask previous text
+            self.printBox(x, y, length, " ", "Default")
+            # Get text
             string = self.window.getstr(y, x, length)
             if (string.isalnum() or len(string) == 0):
                 break
@@ -137,16 +161,40 @@ class Window():
 
     # Get an integer
     def getInt(self, x, y, length = 50):
-        value = self.getText(x, y, length)
-        if (value == False):
+        # Enable echo mode
+        curses.echo()
+        # Get string
+        while(True):
+            # Mask previous text
+            self.printBox(x, y, length, " ", "Default")
+            # Get text
+            string = self.window.getstr(y, x, length)
+            if (string.isdigit() or len(string) == 0):
+                break
+        # Disable echo mode
+        curses.noecho()
+        # Return string
+        if (len(string) == 0):
             return -1
         else:
-            return int(value)
+            return int(string)
+
+    # Wait for a specific key signal
+    def waitForKey(self, key):
+        # Wait for key
+        while (True):
+            if (self.getChr() == ord(key)):
+                return True
 
     # Wait for quit signal
     def waitQuit(self):
+        # Get the screen size
+        height, width = self.window.getmaxyx()
+        # Print the string
+        self.printBox(0, height - 1, width - 1, "Press [q] to quit the program.", "Warning", "center")
+        # Wait for key
         while (True):
-            if (self.getChar() == ord('q')):
+            if (self.getChr() == ord('q')):
                 return True
 
     # Draw a color map
@@ -154,6 +202,6 @@ class Window():
         height, width = self.window.getmaxyx()
         for i in range(0, curses.COLORS):
             if (i != 0 and i % 60 == 0):
-                self.getKey()
+                self.getChr()
             self.defineColor(str(i), -1, i)
             self.printLine(i % 60, str(i), str(i))

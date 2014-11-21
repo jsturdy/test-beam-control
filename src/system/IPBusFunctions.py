@@ -44,11 +44,27 @@ class GLIB:
 
     # Read VFAT2 register
     def getVFAT2(self, num, register):
-        return self.get('vfat2_' + str(num) + '_' + register)
+        value = self.get('vfat2_' + str(num) + '_' + register)
+        if (((value & 0x4000000) >> 26) == 1):
+            return False
+        else:
+            return value
 
     # Write VFAT2 register
     def setVFAT2(self, num, register, value):
         return self.set('vfat2_' + str(num) + '_' + register, value)
+
+    # Test if VFAT2 is connected
+    def isVFAT2(self, num):
+        # Test read
+        chipId = self.get('vfat2_' + str(num) + '_chipid0')
+        #
+        if (chipId == False):
+            return False
+        elif (((chipId & 0x4000000) >> 26) == 1):
+            return False
+        else:
+            return True
 
     # Print error
     def printError(self, error):

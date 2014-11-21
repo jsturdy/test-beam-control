@@ -1,127 +1,97 @@
 # System imports
-import sys, os
 from system import *
 
-####################### Default parameters #######################
-
-IPreampIn = 0xA8
-IPreampFeed = 0x50
-IPreampOut = 0x96
-IShaper = 0x96
-IShaperFeed = 0x64
-IComp = 0x78
-VThreshold2 = 0x0
-
 # Create window
-window = Window("Front-end bias")
+window = Window("Bias a VFAT2's front-end")
 
 # Get GLIB access
-glib = GLIB('192.168.0.115', 'register_mapping.dat')
+glib = GLIB("192.168.0.115", "register_mapping.dat")
 glib.setWindow(window)
 
-# Print GLIB firmware version
-glib_firmware_version = glib.get('glib_firmware_version')
-window.printBox(0, 4, 40, "GLIB firmware version: ", "Default", "right")
-window.printBox(40, 4, 40, hex(glib_firmware_version), "Default", "left")
+# Get a VFAT2 number
+window.printBox(0, 4, 30, "Select a VFAT2 to scan [8-13]:", "Default", "left")
+inputData = window.getInt(31, 4, 2)
+VFAT2 = 8 if (inputData < 8 or inputData > 13) else inputData
+window.printBox(31, 4, 3, str(VFAT2), "Input", "left")
 
-# Print OptoHybrid firmware version
-oh_firmware_version = glib.get('oh_firmware_version')
-window.printBox(0, 5, 40, "OptoHybrid firmware version: ", "Default", "right")
-window.printBox(40, 5, 40, hex(oh_firmware_version), "Default", "left")
+# Get a IPreampIn
+window.printBox(0, 6, 20, "IPreampIn:", "Default", "left")
+window.printBox(17, 6, 10, "[168]", "Default", "left")
+inputData = window.getInt(13, 6, 3)
+IPreampIn = 168 if (inputData < 0 or inputData > 255) else inputData
+window.printBox(13, 6, 3, str(IPreampIn), "Input", "left")
 
-# Design
-window.printLine(7, "Press [Enter] to use the default values", "Info", "center")
+# Get a IPreampFeed
+window.printBox(0, 7, 20, "IPreampFeed:", "Default", "left")
+window.printBox(17, 7, 10, "[80]", "Default", "left")
+inputData = window.getInt(13, 7, 3)
+IPreampFeed = 80 if (inputData < 0 or inputData > 255) else inputData
+window.printBox(13, 7, 3, str(IPreampFeed), "Input", "left")
 
-# VFAT2 select
-window.printBox(0, 9, 40, "VFAT2 to bias: ", "Default", "right")
-window.printBox(50, 9, 10, "[8]", "Default", "left")
+# Get a IPreampOut
+window.printBox(0, 8, 20, "IPreampOut:", "Default", "left")
+window.printBox(17, 8, 10, "[150]", "Default", "left")
+inputData = window.getInt(13, 8, 3)
+IPreampOut = 150 if (inputData < 0 or inputData > 255) else inputData
+window.printBox(13, 8, 3, str(IPreampOut), "Input", "left")
 
-# Front-end bias
-window.printBox(0, 11, 40, "Register  ", "Default", "right")
-window.printBox(40, 11, 10, "Value", "Default", "left")
-window.printBox(50, 11, 10, "Default", "Default", "left")
+# Get a IShaper
+window.printBox(0, 9, 20, "IShaper:", "Default", "left")
+window.printBox(17, 9, 10, "[150]", "Default", "left")
+inputData = window.getInt(13, 9, 3)
+IShaper = 150 if (inputData < 0 or inputData > 255) else inputData
+window.printBox(13, 9, 3, str(IShaper), "Input", "left")
 
-window.printBox(0, 12, 40, "IPreampIn: ", "Default", "right")
-window.printBox(50, 12, 10, "[" + str(IPreampIn) + "]", "Default", "left")
+# Get a IShaperFeed
+window.printBox(0, 10, 20, "IShaperFeed:", "Default", "left")
+window.printBox(17, 10, 10, "[100]", "Default", "left")
+inputData = window.getInt(13, 10, 3)
+IShaperFeed = 100 if (inputData < 0 or inputData > 255) else inputData
+window.printBox(13, 10, 3, str(IShaperFeed), "Input", "left")
 
-window.printBox(0, 13, 40, "IPreampFeed: ", "Default", "right")
-window.printBox(50, 13, 10, "[" + str(IPreampFeed) + "]", "Default", "left")
+# Get a IComp
+window.printBox(0, 11, 20, "IComp:", "Default", "left")
+window.printBox(17, 11, 10, "[120]", "Default", "left")
+inputData = window.getInt(13, 11, 3)
+IComp = 120 if (inputData < 0 or inputData > 255) else inputData
+window.printBox(13, 11, 3, str(IComp), "Input", "left")
 
-window.printBox(0, 14, 40, "IPreampOut: ", "Default", "right")
-window.printBox(50, 14, 10, "[" + str(IPreampOut) + "]", "Default", "left")
+# Get a VThreshold1
+window.printBox(0, 12, 20, "VThreshold1:", "Default", "left")
+window.printBox(17, 12, 10, "[10]", "Default", "left")
+inputData = window.getInt(13, 12, 3)
+VThreshold1 = 10 if (inputData < 0 or inputData > 255) else inputData
+window.printBox(13, 12, 3, str(VThreshold1), "Input", "left")
 
-window.printBox(0, 15, 40, "IShaper: ", "Default", "right")
-window.printBox(50, 15, 10, "[" + str(IShaper) + "]", "Default", "left")
+# Get a VThreshold2
+window.printBox(0, 13, 20, "VThreshold2:", "Default", "left")
+window.printBox(17, 13, 10, "[0]", "Default", "left")
+inputData = window.getInt(13, 13, 3)
+VThreshold2 = 0 if (inputData < 0 or inputData > 255) else inputData
+window.printBox(13, 13, 3, str(VThreshold2), "Input", "left")
 
-window.printBox(0, 16, 40, "IShaperFeed: ", "Default", "right")
-window.printBox(50, 16, 10, "[" + str(IShaperFeed) + "]", "Default", "left")
-
-window.printBox(0, 17, 40, "IComp: ", "Default", "right")
-window.printBox(50, 17, 10, "[" + str(IComp) + "]", "Default", "left")
-
-window.printBox(0, 18, 40, "VThreshold2: ", "Default", "right")
-window.printBox(50, 18, 10, "[" + str(VThreshold2) + "]", "Default", "left")
-
-# Ask values
-VFAT2 = window.getInt(40, 9, 10)
-IPreampIn_value = window.getInt(40, 12, 10)
-IPreampFeed_value = window.getInt(40, 13, 10)
-IPreampOut_value = window.getInt(40, 14, 10)
-IShaper_value = window.getInt(40, 15, 10)
-IShaperFeed_value = window.getInt(40, 16, 10)
-IComp_value = window.getInt(40, 17, 10)
-VThreshold2_value = window.getInt(40, 18, 10)
-
-if (VFAT2 == -1):
-    VFAT2 = 8
-if (IPreampIn_value == -1):
-    IPreampIn_value = IPreampIn
-if (IPreampFeed_value == -1):
-    IPreampFeed_value = IPreampFeed
-if (IPreampOut_value == -1):
-    IPreampOut_value = IPreampOut
-if (IShaper_value == -1):
-    IShaper_value = IShaper
-if (IShaperFeed_value == -1):
-    IShaperFeed_value = IShaperFeed
-if (IComp_value == -1):
-    IComp_value = IComp
-if (VThreshold2_value == -1):
-    VThreshold2_value = VThreshold2
-
-# Design
-window.printLine(20, "Press [s] to bias the front-end or [ctrl+c] to quit", "Info", "center")
-
-# Wait for Start signal
-while(True):
-    c = window.getChar()
-    if (c == ord('s')):
-        break
+window.printLine(15, "Press [s] to bias the front-end.", "Info", "center")
+window.waitForKey("s")
 
 # Test if VFAT2 is present
-testVFAT2Present = glib.getVFAT2(VFAT2, 'chipid0')
-
-if (((testVFAT2Present & 0x4000000) >> 26) == 1):
+if (glib.isVFAT2(VFAT2) == False):
     # Error
-    window.printLine(21, "VFAT2 not present!", "Error", "center")
-
+    window.printLine(16, "The selected VFAT2 is not present!", "Error", "center")
+#
 else:
     # Bias front-end
-    glib.setVFAT2(VFAT2, 'ipreampin', IPreampIn_value)
-    glib.setVFAT2(VFAT2, 'ipreampfeed', IPreampFeed_value)
-    glib.setVFAT2(VFAT2, 'ipreampout', IPreampOut_value)
-    glib.setVFAT2(VFAT2, 'ishaper', IShaper_value)
-    glib.setVFAT2(VFAT2, 'ishaperfeed', IShaperFeed_value)
-    glib.setVFAT2(VFAT2, 'icomp', IComp_value)
-    glib.setVFAT2(VFAT2, 'vthreshold2', VThreshold2_value)
-
-    glib.set('oh_resync', 0)
+    glib.setVFAT2(VFAT2, "ipreampin", IPreampIn)
+    glib.setVFAT2(VFAT2, "ipreampfeed", IPreampFeed)
+    glib.setVFAT2(VFAT2, "ipreampout", IPreampOut)
+    glib.setVFAT2(VFAT2, "ishaper", IShaper)
+    glib.setVFAT2(VFAT2, "ishaperfeed", IShaperFeed)
+    glib.setVFAT2(VFAT2, "icomp", IComp)
+    glib.setVFAT2(VFAT2, "vthreshold1", VThreshold1)
+    glib.setVFAT2(VFAT2, "vthreshold2", VThreshold2)
+    glib.set("oh_resync", 0)
 
     # Success
-    window.printLine(21, "Front-end biased", "Success", "center")
-
-# Quit
-window.printLine(22, "Press [q] to quit the program", "Warning", "center")
+    window.printLine(16, "Front-end biased!", "Success", "center")
 
 # Wait before quiting
 window.waitQuit()

@@ -358,7 +358,8 @@ glib_empty_tracking_data        4004010c    ffffffff     0     1
 *------------------------------------------------------------------------------------------
 
 glib_request_trigger_data       40050000    ffffffff     1     0
-glib_empty_trigger_data         40050000    ffffffff     0     1
+glib_empty_trigger_data         40040180    ffffffff     0     1
+glib_sbit_select                40040181    ffffffff     1     1
 
 *------------------------------------------------------------------------------------------
 * GLIB registers
