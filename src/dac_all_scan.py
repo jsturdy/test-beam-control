@@ -113,6 +113,29 @@ else:
             # Update plot
             graph(dacValues[DAC - 1], adcValues[DAC - 1], 0, 255, 0, 1023, "DAC value", "ADC value")
 
+        # Reset the DAC
+        if (DAC == 1):
+            glib.setVFAT2(VFAT2, "ipreampin", 0)
+        elif (DAC == 2):
+            glib.setVFAT2(VFAT2, "ipreampfeed", 0)
+        elif (DAC == 3):
+            glib.setVFAT2(VFAT2, "ipreampout", 0)
+        elif (DAC == 4):
+            glib.setVFAT2(VFAT2, "ishaper", 0)
+        elif (DAC == 5):
+            glib.setVFAT2(VFAT2, "ishaperfeed", 0)
+        elif (DAC == 6):
+            glib.setVFAT2(VFAT2, "icomp", 0)
+        elif (DAC == 7):
+            glib.setVFAT2(VFAT2, "vthreshold1", 0)
+        elif (DAC == 8):
+            glib.setVFAT2(VFAT2, "vthreshold2", 0)
+        elif (DAC == 9):
+            glib.setVFAT2(VFAT2, "vcal", 0)
+
+        # Send Resync signal
+        glib.set("oh_resync", 0x1)
+
     # Write to file
     if (saveResults):
         fileName = "../data/dac-all-" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"

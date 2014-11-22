@@ -64,6 +64,9 @@ for i in range(0, 6):
         else:
             glib.setVFAT2(i + 8, 'ctrl0', 0x36)
 
+# Send Resync signal
+glib.set("oh_resync", 0x1)
+
 # Design
 window.printLine(14, "Settings applied!", "Success", "center")
 

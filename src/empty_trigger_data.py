@@ -16,7 +16,7 @@ window.waitForKey("s")
 glib.set('glib_empty_trigger_data', 0)
 
 # Design
-window.printLine(5, "Trigger buffers emptied", "Success", "center")
+window.printLine(5, "Trigger buffers emptied!", "Success", "center")
 
 # Wait before quiting
 window.waitQuit()
