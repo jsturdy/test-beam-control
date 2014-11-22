@@ -6,7 +6,7 @@ from system import *
 window = Window("Scan all VFAT2's DACs")
 
 # Get GLIB access
-glib = GLIB("192.168.0.115", "register_mapping.dat")
+glib = GLIB()
 glib.setWindow(window)
 
 # Get a VFAT2 number

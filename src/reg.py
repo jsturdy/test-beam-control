@@ -2,7 +2,7 @@
 from system import *
 
 # Get GLIB access
-glib = GLIB('192.168.0.115', 'register_mapping.dat')
+glib = GLIB()
 
 if (sys.argv[1] == 'w'):
     print "Write to ", sys.argv[2]

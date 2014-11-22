@@ -6,7 +6,7 @@ from system import *
 window = Window("Observer tracking data")
 
 # Get GLIB access
-glib = GLIB('192.168.0.115', 'register_mapping.dat')
+glib = GLIB()
 glib.setWindow(window)
 
 # Design

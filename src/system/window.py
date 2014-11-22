@@ -86,7 +86,13 @@ class Window():
         # Get the screen size
         height, width = self.window.getmaxyx()
         # Print the string
-        self.printString(0, height - 1, string, "Error")
+        self.printString(0, height - 2, string, "Error")
+        #
+        self.waitQuit()
+        #
+        self.close()
+        #
+        sys.exit(0)
 
     # Print a full line on the screen (auto-fill)
     def printLine(self, y, string, color = "Default", aligned = "left"):

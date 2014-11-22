@@ -5,7 +5,7 @@ from system import *
 window = Window("Empty the trigger data buffer")
 
 # Get GLIB access
-glib = GLIB('192.168.0.115', 'register_mapping.dat')
+glib = GLIB()
 glib.setWindow(window)
 
 # Design

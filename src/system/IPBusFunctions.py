@@ -12,8 +12,11 @@ class GLIB:
     window = False
 
     # Create IPBus
-    def __init__(self, ipaddress, table):
-        ipbusAddrTable = AddressTable(table)
+    def __init__(self):
+        f = open(os.path.dirname(os.path.abspath(__file__)) + "/glib_ip.dat", "r")
+        ipaddress = f.readline().strip()
+        f.close()
+        ipbusAddrTable = AddressTable(os.path.dirname(os.path.abspath(__file__)) + "/register_mapping.dat")
         self.ipbus = ChipsBusUdp(ipbusAddrTable, ipaddress, 50001)
 
     # Set window
@@ -44,20 +47,20 @@ class GLIB:
 
     # Read VFAT2 register
     def getVFAT2(self, num, register):
-        value = self.get('vfat2_' + str(num) + '_' + register)
+        value = self.get("vfat2_" + str(num) + "_" + register)
         if (((value & 0x4000000) >> 26) == 1):
             return False
         else:
-            return value
+            return (value & 0xff)
 
     # Write VFAT2 register
     def setVFAT2(self, num, register, value):
-        return self.set('vfat2_' + str(num) + '_' + register, value)
+        return self.set("vfat2_" + str(num) + "_" + register, value)
 
     # Test if VFAT2 is connected
     def isVFAT2(self, num):
         # Test read
-        chipId = self.get('vfat2_' + str(num) + '_chipid0')
+        chipId = self.get("vfat2_" + str(num) + "_chipid0")
         #
         if (chipId == False):
             return False

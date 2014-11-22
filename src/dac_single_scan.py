@@ -6,7 +6,7 @@ from system import *
 window = Window("Scan one VFAT2's DAC")
 
 # Get GLIB access
-glib = GLIB("192.168.0.115", "register_mapping.dat")
+glib = GLIB()
 glib.setWindow(window)
 
 # Get a VFAT2 number
@@ -102,16 +102,13 @@ else:
         # Send Resync signal
         glib.set("oh_resync", 0x1)
 
-        # Wait a second
-        time.sleep(0.1)
-
         # Average ADC value
         averageADC = 0
 
         # Get N ADC
         for i in range(0, nEvents):
 
-            time.sleep(0.1)
+            time.sleep(0.25)
 
             if (DAC <= 6):
                 averageADC += glib.get("oh_adc_i")
