@@ -52,98 +52,89 @@ else:
     window.printLine(14, "Press [s] to start the scan.", "Info", "center")
     window.waitForKey("s")
 
-    # Test if VFAT2 is present
-    testVFAT2Present = glib.getVFAT2(VFAT2, "chipid0")
+    # Create a plot and its data
+    threshold = []
+    dataPoints = []
 
-    if (((testVFAT2Present & 0x4000000) >> 26) == 1):
-        # Error
-        window.printLine(15, "VFAT2 not present!", "Error", "center")
+    # Loop over Threshold 1
+    for VThreshold1 in range(minimumValue, maximumValue):
 
-    else:
+        # Percentage
+        percentage = (VThreshold1 - minimumValue) / (1. * maximumValue - minimumValue) * 100.
+        window.printLine(15, "Scanning... (" + str(percentage)[:4] + "%)", "Info", "center")
 
-        # Create a plot and its data
-        threshold = []
-        dataPoints = []
+        # Set Threshold 1
+        glib.setVFAT2(VFAT2, "vthreshold1", VThreshold1)
 
-        # Loop over Threshold 1
-        for VThreshold1 in range(minimumValue, maximumValue):
+        # Send Resync signal
+        glib.set("oh_resync", 0x1)
 
-            # Percentage
-            percentage = (VThreshold1 - minimumValue) / (1. * maximumValue - minimumValue) * 100.
-            window.printLine(15, "Scanning... (" + str(percentage)[:4] + "%)", "Info", "center")
+        # Empty tracking fifo
+        glib.set("glib_empty_tracking_data", 0)
 
-            # Set Threshold 1
-            glib.setVFAT2(VFAT2, "vthreshold1", VThreshold1)
+        # Efficiency variable
+        hitCount = 0.
 
-            # Send Resync signal
-            glib.set("oh_resync", 0x1)
+        # Read tracking packets
+        for i in range(0, nEvents):
 
-            # Empty tracking fifo
-            glib.set("glib_empty_tracking_data", 0)
+            # Send 5 LV1A signal (to be sure...)
+            glib.set("oh_lv1a", 0x1)
+            glib.set("oh_lv1a", 0x1)
+            glib.set("oh_lv1a", 0x1)
+            glib.set("oh_lv1a", 0x1)
+            glib.set("oh_lv1a", 0x1)
+            glib.set("oh_lv1a", 0x1)
 
-            # Efficiency variable
-            hitCount = 0.
+            # Get a tracking packet (with a limit)
+            while (True):
 
-            # Read tracking packets
-            for i in range(0, nEvents):
+                # Request new data
+                isNewData = glib.get("glib_request_tracking_data")
 
-                # Send 5 LV1A signal (to be sure...)
-                glib.set("oh_lv1a", 0x1)
-                glib.set("oh_lv1a", 0x1)
-                glib.set("oh_lv1a", 0x1)
-                glib.set("oh_lv1a", 0x1)
-                glib.set("oh_lv1a", 0x1)
-                glib.set("oh_lv1a", 0x1)
+                if (isNewData == 0x1):
+                    break
 
-                # Get a tracking packet (with a limit)
-                while (True):
+            packet1 = glib.get("glib_tracking_data_1")
+            packet2 = glib.get("glib_tracking_data_2")
+            packet3 = glib.get("glib_tracking_data_3")
+            packet4 = glib.get("glib_tracking_data_4")
+            packet5 = glib.get("glib_tracking_data_5")
 
-                    # Request new data
-                    isNewData = glib.get("glib_request_tracking_data")
+            data1 = ((0x0000ffff & packet5) << 16) | ((0xffff0000 & packet4) >> 16)
+            data2 = ((0x0000ffff & packet4) << 16) | ((0xffff0000 & packet3) >> 16)
+            data3 = ((0x0000ffff & packet3) << 16) | ((0xffff0000 & packet2) >> 16)
+            data4 = ((0x0000ffff & packet2) << 16) | ((0xffff0000 & packet1) >> 16)
 
-                    if (isNewData == 0x1):
-                        break
+            if (data1 + data2 + data3 + data4 != 0):
+                hitCount += 1.
 
-                packet1 = glib.get("glib_tracking_data_1")
-                packet2 = glib.get("glib_tracking_data_2")
-                packet3 = glib.get("glib_tracking_data_3")
-                packet4 = glib.get("glib_tracking_data_4")
-                packet5 = glib.get("glib_tracking_data_5")
+        hitCount /= (nEvents * 1.)
 
-                data1 = ((0x0000ffff & packet5) << 16) | ((0xffff0000 & packet4) >> 16)
-                data2 = ((0x0000ffff & packet4) << 16) | ((0xffff0000 & packet3) >> 16)
-                data3 = ((0x0000ffff & packet3) << 16) | ((0xffff0000 & packet2) >> 16)
-                data4 = ((0x0000ffff & packet2) << 16) | ((0xffff0000 & packet1) >> 16)
+        # Add data
+        threshold.append(VThreshold1)
+        dataPoints.append(hitCount)
 
-                if (data1 + data2 + data3 + data4 != 0):
-                    hitCount += 1.
+        # Update plot
+        graph(threshold, dataPoints, 0, 255, 0, 1, "Threshold", "Percentage of hits")
 
-            hitCount /= (nEvents * 1.)
+        # Wait a bit
+        time.sleep(0.1)
 
-            # Add data
-            threshold.append(VThreshold1)
-            dataPoints.append(hitCount)
+    # Write to file
+    if (saveResults):
+        fileName = "../data/threshold-" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
+        f = open(fileName,"w")
+        f.write("VThreshold1 Scan\n")
+        f.write("Time: " + time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime()) + "\n")
+        f.write("VFAT2: " + str(VFAT2) + "\n")
+        f.write("Number of events: " + str(nEvents) + "\n")
+        f.write("_".join(map(str, threshold)) + "\n")
+        f.write("_".join(map(str, dataPoints)) + "\n")
+        f.close()
 
-            # Update plot
-            graph(threshold, dataPoints, 0, 255, 0, 1, "Threshold", "Percentage of hits")
-
-            # Wait a bit
-            time.sleep(0.1)
-
-        # Write to file
-        if (saveResults):
-            fileName = "../data/threshold-" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
-            f = open(fileName,"w")
-            f.write("VThreshold1 Scan\n")
-            f.write("Time: " + time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime()) + "\n")
-            f.write("VFAT2: " + str(VFAT2) + "\n")
-            f.write("Number of events: " + str(nEvents) + "\n")
-            f.write("_".join(map(str, threshold)) + "\n")
-            f.write("_".join(map(str, dataPoints)) + "\n")
-            f.close()
-
-        # Success
-        window.printLine(15, "Scan finished!", "Success", "center")
+    # Success
+    window.printLine(15, "Scan finished!", "Success", "center")
 
 # Wait before quiting
 window.waitQuit()
