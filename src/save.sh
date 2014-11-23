@@ -1,5 +1,5 @@
 #!/bin/bash        
-now=$(date +"%m-%d-%Y %h-%m-%s")
+now=$(date +"%Y-%m-%d %H-%M-%S")
 echi ${now}
 git ls-files --deleted -z | xargs -0 git rm --cached
 git add .
