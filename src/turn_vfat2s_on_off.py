@@ -13,12 +13,12 @@ window.printLine(4, "Select the VFAT2s you want to Power On [1] or Off [0].", "D
 
 # Get current status
 VFAT2 = [False, False, False, False, False, False]
-VFAT2[0] = 1 if (glib.getVFAT2(8, "ctrl0") & 0x1) else 0
-VFAT2[1] = 1 if (glib.getVFAT2(9, "ctrl0") & 0x1) else 0
-VFAT2[2] = 1 if (glib.getVFAT2(10, "ctrl0") & 0x1) else 0
-VFAT2[3] = 1 if (glib.getVFAT2(11, "ctrl0") & 0x1) else 0
-VFAT2[4] = 1 if (glib.getVFAT2(12, "ctrl0") & 0x1) else 0
-VFAT2[5] = 1 if (glib.getVFAT2(13, "ctrl0") & 0x1) else 0
+VFAT2[0] = 1 if (glib.getVFAT2(8, "ctrl0", True) & 0x1) else 0
+VFAT2[1] = 1 if (glib.getVFAT2(9, "ctrl0", True) & 0x1) else 0
+VFAT2[2] = 1 if (glib.getVFAT2(10, "ctrl0", True) & 0x1) else 0
+VFAT2[3] = 1 if (glib.getVFAT2(11, "ctrl0", True) & 0x1) else 0
+VFAT2[4] = 1 if (glib.getVFAT2(12, "ctrl0", True) & 0x1) else 0
+VFAT2[5] = 1 if (glib.getVFAT2(13, "ctrl0", True) & 0x1) else 0
 
 # VFAT2s
 window.printBox(0, 5, 17, "VFAT2 #8  [" + ("On" if (VFAT2[0] == 1) else "Off") + "]: ", "Default", "left")

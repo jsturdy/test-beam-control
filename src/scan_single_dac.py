@@ -148,6 +148,23 @@ else:
     # Send Resync signal
     glib.set("oh_resync", 0x1)
 
+    sxx = 0.
+    syy = 0.
+    sxy = 0.
+
+    for i in range(0, len(dacValues)):
+        sxx += dacValues[i] * dacValues[i] * 1.
+        syy += adcValues[i] * dacValues[i] * 1.
+        sxy += adcValues[i] * adcValues[i] * 1.
+
+    slope = sxy / sxx
+    offset = sum(adcValues) / (len(adcValues) * 1.) - slope * sum(dacValues) / (len(dacValues) * 1.)
+
+    # Success
+    window.printLine(18, "Scan finished!", "Success", "center")
+    window.printLine(19, "Slope = " + str(slope), "Info", "center")
+    window.printLine(20, "Offset = " + str(offset), "Info", "center")
+
     # Write to file
     if (saveResults):
         fileName = "../../test-beam-data/dac/single-" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
@@ -167,9 +184,6 @@ else:
     glib.setVFAT2(VFAT2, "ctrl1", 0x0)
     glib.setVFAT2(VFAT2, "ctrl0", 0x0)
     glib.set("oh_resync", 1)
-
-    # Success
-    window.printLine(18, "Scan finished!", "Success", "center")
 
 # Wait before quiting
 window.waitQuit()

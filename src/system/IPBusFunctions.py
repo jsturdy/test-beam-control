@@ -24,39 +24,42 @@ class GLIB:
         self.window = window
 
     # Read operation
-    def get(self, register):
+    def get(self, register, ignoreError = False):
         for i in range(0, 5):
             try:
                 controlChar = self.ipbus.read(register)
                 return controlChar
             except ChipsException, e:
                 pass
-        self.printError("Could not read " + register)
+        if (ignoreError == False):
+            self.printError("Could not read " + register)
         return False
 
     # Write operation
-    def set(self, register, value):
+    def set(self, register, value, ignoreError = False):
         for i in range(0, 5):
             try:
                 self.ipbus.write(register, value)
                 return True
             except ChipsException, e:
                 pass
-        self.printError("Could not write " + register)
+        if (ignoreError == False):
+            self.printError("Could not write " + register)
         return False
 
     # Read VFAT2 register
-    def getVFAT2(self, num, register):
-        value = self.get("vfat2_" + str(num) + "_" + register)
+    def getVFAT2(self, num, register, ignoreError = False):
+        value = self.get("vfat2_" + str(num) + "_" + register, ignoreError)
         if (((value & 0x4000000) >> 26) == 1):
-            self.printError("VFAT2 not found!")
+            if (ignoreError == False):
+                self.printError("VFAT2 not found!")
             return False
         else:
             return (value & 0xff)
 
     # Write VFAT2 register
-    def setVFAT2(self, num, register, value):
-        return self.set("vfat2_" + str(num) + "_" + register, value)
+    def setVFAT2(self, num, register, value, ignoreError = False):
+        return self.set("vfat2_" + str(num) + "_" + register, value, ignoreError)
 
     # Test if VFAT2 is connected
     def isVFAT2(self, num):

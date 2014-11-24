@@ -119,7 +119,7 @@ else:
         dataPoints.append(hitCount)
 
         # Update plot
-        graph(threshold, dataPoints, 0, 255, 0, 1, "Threshold", "Percentage of hits")
+        graph(threshold, dataPoints, minimumValue, maximumValue, 0, 1, "Threshold", "Percentage of hits")
 
         # Wait a bit
         time.sleep(0.1)

@@ -56,14 +56,6 @@ else:
     latencies = []
     dataPoints = []
 
-    # Set VFAT2 parameters
-    oldLatency = glib.getVFAT2(VFAT2, "latency")
-    oldControl2 = glib.getVFAT2(VFAT2, "ctrl2")
-    oldChannel = glib.getVFAT2(VFAT2, "channel8")
-    glib.setVFAT2(VFAT2, "ctrl2", oldControl2 | 0x70)
-    glib.setVFAT2(VFAT2, "vcal", 0xff)
-    glib.setVFAT2(VFAT2, "channel8", oldChannel | 0x40)
-
     # Loop over Threshold 1
     for latency in range(minimumValue, maximumValue):
 
@@ -85,13 +77,6 @@ else:
 
         # Read tracking packets
         for i in range(0, nEvents):
-
-            # Send 5 delayed signal (to be sure...)
-            glib.set("oh_lv1a_and_calpulse", 128)
-            glib.set("oh_lv1a_and_calpulse", 128)
-            glib.set("oh_lv1a_and_calpulse", 128)
-            glib.set("oh_lv1a_and_calpulse", 128)
-            glib.set("oh_lv1a_and_calpulse", 128)
 
             # Get a tracking packet (with a limit)
             while (True):
@@ -123,15 +108,13 @@ else:
         dataPoints.append(hitCount)
 
         # Update plot
-        graph(latencies, dataPoints, 0, 255, 0, 1, "Latency", "Percentage of hits")
+        #graph(latencies, dataPoints, 0, 255, 0, 1, "Latency", "Percentage of hits")
 
         # Wait a bit
         time.sleep(0.1)
 
     # Restore old parameters
-    glib.setVFAT2(VFAT2, "latency", oldLatency)
-    glib.setVFAT2(VFAT2, "ctrl2", oldControl2)
-    glib.setVFAT2(VFAT2, "channel8", oldChannel)
+    glib.setVFAT2(VFAT2, "latency", 0)
 
     # Write to file
     if (saveResults):
