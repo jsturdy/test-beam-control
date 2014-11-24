@@ -30,7 +30,7 @@ window.printBox(0, 16, 8, "CRC:", "Default", "left")
 window.printBox(0, 17, 8, "BX:", "Default", "left")
 
 # File to save to
-fileName = "../data/tracking/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
+fileName = "../../test-beam-data/tracking/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
 f = open(fileName,"w")
 f.write("Acquire tracking data\n")
 f.write("Time: " + time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime()) + "\n")

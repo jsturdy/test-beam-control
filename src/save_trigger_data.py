@@ -23,7 +23,7 @@ window.printBox(0, 9, 7, "BX:", "Default", "left")
 window.printBox(0, 10, 7, "SBits:", "Default", "left")
 
 # File to save to
-fileName = "../data/trigger/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
+fileName = "../../test-beam-data/trigger/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
 f = open(fileName,"w")
 f.write("Trigger data tacking\n")
 f.write("Time: " + time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime()) + "\n")

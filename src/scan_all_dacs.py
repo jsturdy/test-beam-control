@@ -138,7 +138,7 @@ else:
 
     # Write to file
     if (saveResults):
-        fileName = "../data/dac/all-" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
+        fileName = "../../test-beam-data/all-" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
         f = open(fileName,"w")
         f.write("DAC All Scan\n")
         f.write("Time: " + time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime()) + "\n")

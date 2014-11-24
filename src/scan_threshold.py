@@ -129,7 +129,7 @@ else:
 
     # Write to file
     if (saveResults):
-        fileName = "../data/threshold/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
+        fileName = "../../test-beam-data/threshold/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
         f = open(fileName,"w")
         f.write("VThreshold1 Scan\n")
         f.write("Time: " + time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime()) + "\n")
