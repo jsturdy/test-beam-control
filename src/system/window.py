@@ -112,6 +112,13 @@ class Window():
 
     # Print a string on the screen
     def printString(self, x, y, string, color = "Default"):
+        # Avoid going oustide the terminal
+        height, width = self.window.getmaxyx()
+        if (y >= height):
+            y = height - 1
+            if (len(string) >= width):
+                string = string[:width-1]
+
         # Print the string
         self.window.addstr(y, x, string, curses.color_pair(self.colors[color]))
         # Refresh window

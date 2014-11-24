@@ -66,12 +66,12 @@ window.printLine(21, "Press [s] to apply the settings.", "Info", "center")
 window.waitForKey("s")
 
 # Apply values
+glib.set("oh_vfat2_fallback", vfat2Fallback)
+glib.set("oh_cdce_fallback", cdceFallback)
 glib.set("oh_trigger_source", triggerSource)
 glib.set("oh_sbit_select", (sbitSource - 8))
 glib.set("oh_vfat2_src_select", vfat2Source)
-glib.set("oh_vfat2_fallback", vfat2Fallback)
 glib.set("oh_cdce_src_select", cdceSource)
-glib.set("oh_cdce_fallback", cdceFallback)
 
 # Design
 window.printLine(22, "Settings applied!", "Success", "center")
