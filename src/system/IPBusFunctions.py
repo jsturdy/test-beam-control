@@ -49,6 +49,7 @@ class GLIB:
     def getVFAT2(self, num, register):
         value = self.get("vfat2_" + str(num) + "_" + register)
         if (((value & 0x4000000) >> 26) == 1):
+            self.printError("VFAT2 not found!")
             return False
         else:
             return (value & 0xff)
