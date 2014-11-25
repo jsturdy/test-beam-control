@@ -128,7 +128,7 @@ class GLIB:
             return data
 
     # Restore VFAT2 configuration
-    def restoreVFAT2(self, num, saved):
+    def restoreVFAT2(self, num, data):
         if (self.isVFAT2(num) == False):
             return False
         else:
