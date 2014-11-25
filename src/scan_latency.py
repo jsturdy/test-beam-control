@@ -93,7 +93,7 @@ else:
         hitCount /= (nEvents * 1.)
 
         # Save the points
-        save.writePair(threshold, hitCount)
+        save.writePair(latency, hitCount)
 
         # Add data
         latencyValues.append(latency)

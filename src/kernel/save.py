@@ -36,6 +36,6 @@ class Save():
         self.f.write(str(x)+";"+str(y)+"\n")
 
     def writeDict(self, dictionnary):
-        for key, value in dictionnary:
-            self.write(str(key)+";"+str(value)+"\n")
+        for key in dictionnary:
+            self.write(str(key)+";"+str(dictionnary[key])+"\n")
 
