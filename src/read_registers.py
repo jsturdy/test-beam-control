@@ -9,7 +9,6 @@ glib = GLIB()
 glib.setWindow(window)
 
 # Get a register address
-window.printBox(0, 4, 26, "Register address [0-28]:", "Default", "left")
 window.printBox(0, 5, 26, "0: GLIB error cnt")
 window.printBox(26, 5, 26, "1: GLIB VFAT2 RX cnt")
 window.printBox(52, 5, 26, "2: GLIB VFAT2 TX cnt")
@@ -39,12 +38,9 @@ window.printBox(26, 13, 26, "25: OH del Cal cnt")
 window.printBox(52, 13, 26, "36: OH Cal cnt")
 window.printBox(0, 14, 26, "27: OH Resync cnt")
 window.printBox(26, 14, 26, "28: OH BC0 cnt")
+regId = window.inputInt(4, "Register address [0-28]:", 2, 0, 28, 0)
 
-inputData = window.getInt(26, 4, 2)
-regId = 0 if (inputData < 0 or inputData > 28) else inputData
-window.printBox(26, 4, 2, str(regId), "Input", "left")
-
-# Change the register
+# Get the register
 if (regId == 0):
     regValue = glib.get("glib_error_counter")
 elif (regId == 1):
@@ -108,7 +104,7 @@ elif (regId == 28):
 window.printLine(16, "Read value: " + hex(regValue), "Success", "center")
 
 # Wait before quiting
-window.waitQuit()
+window.waitForQuit()
 
 # Close window
 window.close()

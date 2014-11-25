@@ -10,32 +10,48 @@ glib = GLIB()
 glib.setWindow(window)
 
 # Get run number
-window.printBox(0, 4, 12, "Run number:", "Default", "left")
-runNumber = window.getInt(12, 4, 10)
-window.printBox(12, 4, 10, str(runNumber), "Input", "left")
+runNumber = window.inputInt(4, "Run number:", 10, 0, 500000, 0)
 
 # Design
 window.printLine(6, "Press [s] to start the data taking and [ctrl+c] to quit.", "Info", "center")
 window.waitForKey("s")
 
 # Design
-window.printBox(0, 9, 8, "BC:", "Default", "left")
-window.printBox(0, 10, 8, "EC:", "Default", "left")
-window.printBox(0, 11, 8, "ChipID:", "Default", "left")
-window.printBox(0, 12, 8, "Data 1:", "Default", "left")
-window.printBox(0, 13, 8, "Data 2:", "Default", "left")
-window.printBox(0, 14, 8, "Data 3:", "Default", "left")
-window.printBox(0, 15, 8, "Data 4:", "Default", "left")
-window.printBox(0, 16, 8, "CRC:", "Default", "left")
-window.printBox(0, 17, 8, "BX:", "Default", "left")
+window.printBox(0, 9, 8, "BC:")
+window.printBox(0, 10, 8, "EC:")
+window.printBox(0, 11, 8, "ChipID:")
+window.printBox(0, 12, 8, "Data 1:")
+window.printBox(0, 13, 8, "Data 2:")
+window.printBox(0, 14, 8, "Data 3:")
+window.printBox(0, 15, 8, "Data 4:")
+window.printBox(0, 16, 8, "CRC:")
+window.printBox(0, 17, 8, "BX:")
 
-# File to save to
-fileName = "../../test-beam-data/tracking/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
-f = open(fileName,"w")
-f.write("Acquire tracking data\n")
-f.write("Time: " + time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime()) + "\n")
-f.write("Run number: " + str(runNumber) + "\n")
-f.write("BC;EC;ChipID;event;CRC;BX\n")
+# Save VFAT2's parameters
+vfat2Parameters = [None] * 6
+vfat2Parameters[0] = glib.saveVFAT2(8)
+vfat2Parameters[1] = glib.saveVFAT2(9)
+vfat2Parameters[2] = glib.saveVFAT2(10)
+vfat2Parameters[3] = glib.saveVFAT2(11)
+vfat2Parameters[4] = glib.saveVFAT2(12)
+vfat2Parameters[5] = glib.saveVFAT2(13)
+
+# Open the save file
+save = Save("tracking")
+save.writePair("Run number", runNumber)
+save.writeLine("-----")
+save.writeDict(vfat2Parameters[0])
+save.writeLine("-----")
+save.writeDict(vfat2Parameters[1])
+save.writeLine("-----")
+save.writeDict(vfat2Parameters[2])
+save.writeLine("-----")
+save.writeDict(vfat2Parameters[3])
+save.writeLine("-----")
+save.writeDict(vfat2Parameters[4])
+save.writeLine("-----")
+save.writeDict(vfat2Parameters[5])
+save.writeLine("-----")
 
 # Events
 nEvents = 0
@@ -73,18 +89,18 @@ while(True):
     crc = str(0x0000ffff & packet1)
     bx = str(packet7)
 
-    event = bc + ";" + ec + ";" + chipid + ";" + data1 + data2 + data3 + data4 + ";" + crc + ";" + bx + "\n"
-    f.write(event)
+    event = bc + ";" + ec + ";" + chipid + ";" + data1 + data2 + data3 + data4 + ";" + crc + ";" + bx
+    save.writeLine(event)
 
-    window.printBox(8, 9, 10, bc, "Default", "left")
-    window.printBox(8, 10, 10, ec, "Default", "left")
-    window.printBox(8, 11, 10, chipid, "Default", "left")
-    window.printBox(8, 12, 32, data1, "Default", "left")
-    window.printBox(8, 13, 32, data2, "Default", "left")
-    window.printBox(8, 14, 32, data3, "Default", "left")
-    window.printBox(8, 15, 32, data4, "Default", "left")
-    window.printBox(8, 16, 10, crc, "Default", "left")
-    window.printBox(8, 17, 10, bx, "Default", "left")
+    window.printBox(8, 9, 10, bc)
+    window.printBox(8, 10, 10, ec)
+    window.printBox(8, 11, 10, chipid)
+    window.printBox(8, 12, 32, data1)
+    window.printBox(8, 13, 32, data2)
+    window.printBox(8, 14, 32, data3)
+    window.printBox(8, 15, 32, data4)
+    window.printBox(8, 16, 10, crc)
+    window.printBox(8, 17, 10, bx)
 
     nEvents += 1
 

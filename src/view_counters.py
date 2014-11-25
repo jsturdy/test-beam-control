@@ -90,8 +90,5 @@ while (True):
     window.printLine(24, "Press [s] to refresh.", "Info", "center")
     window.waitForKey("s")
 
-# Wait before quiting
-window.waitQuit()
-
 # Close window
 window.close()

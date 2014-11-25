@@ -3,7 +3,7 @@ import time
 from system import *
 
 # Create window
-window = Window("Scan one VFAT2's threshold")
+window = Window("Scan a VFAT2's threshold")
 
 # Get GLIB access
 glib = GLIB()
@@ -13,10 +13,7 @@ glib.setWindow(window)
 window.printLine(4, "For this scan to work, the VFAT2 has to be biased and running!", "Warning", "center")
 
 # Get a VFAT2 number
-window.printBox(0, 6, 30, "Select a VFAT2 to scan [8-13]:", "Default", "left")
-inputData = window.getInt(31, 6, 2)
-VFAT2 = 8 if (inputData < 8 or inputData > 13) else inputData
-window.printBox(31, 6, 3, str(VFAT2), "Input", "left")
+vfat2ID = window.inputInt(6, "Select a VFAT2 to scan [8-13]:", 2, 8, 13, 8)
 
 # Test if VFAT2 is running
 if ((glib.getVFAT2(8, "ctrl0") & 0x1) != 0x1):
@@ -26,48 +23,33 @@ if ((glib.getVFAT2(8, "ctrl0") & 0x1) != 0x1):
 else:
 
     # Limits select
-    window.printBox(0, 8, 29, "Scan threshold from [0-255]:", "Default", "left")
-    inputData = window.getInt(29, 8, 3)
-    minimumValue = 0 if (inputData < 0 or inputData > 255)  else inputData
-    window.printBox(29, 8, 3, str(minimumValue), "Input", "left")
-
-    window.printBox(34, 8, 4, "to", "Default", "left")
-    inputData = window.getInt(37, 8, 3)
-    maximumValue = 255 if (inputData < 0 or inputData > 255)  else inputData
-    window.printBox(37, 8, 3, str(maximumValue), "Input", "left")
+    minimumValue = window.inputInt(8, "Scan threshold from [0-255]:", 3, 0, 255, 0)
+    maximumValue = window.inputIntShifted(34, 8, "to ["+str(minimumValue)+"-255]:", 3, minimumValue, 255, 255)
 
     # Events per threshold
-    window.printBox(0, 10, 38, "Number of events per threshold [100]:", "Default", "left")
-    inputData = window.getInt(38, 10, 5)
-    nEvents = 100 if (inputData < 0) else inputData
-    window.printBox(38, 10, 5, str(nEvents), "Input", "left")
-
-    # Save results
-    window.printBox(0, 12, 4, "Save the results [Y/n]:", "Default", "left")
-    inputData = window.getChar(24, 12)
-    saveResults = True if (inputData == "y" or inputData == "Y" or inputData == False)  else False
-    window.printBox(24, 12, 3, ("Yes" if saveResults else "No"), "Input", "left")
+    nEvents = window.inputInt(10, "Number of events per value (100):", 5, 0, 1000, 100)
 
     # Wait before starting
-    window.printLine(14, "Press [s] to start the scan.", "Info", "center")
+    window.printLine(12, "Press [s] to start the scan.", "Info", "center")
     window.waitForKey("s")
 
-    # Get old threshold
-    oldThreshold = glib.getVFAT2(VFAT2, "vthreshold1")
+    # Save VFAT2's parameters
+    vfat2Parameters = glib.saveVFAT2(vfat2ID)
+
+    # Open the save file
+    save = Save("threshold")
+    save.writeDict(vfat2Parameters)
+    save.writeLine("-----")
 
     # Create a plot and its data
-    threshold = []
-    dataPoints = []
+    thresholdValues = []
+    hitValues = []
 
     # Loop over Threshold 1
-    for VThreshold1 in range(minimumValue, maximumValue):
+    for threshold in range(minimumValue, maximumValue):
 
-        # Percentage
-        percentage = (VThreshold1 - minimumValue) / (1. * maximumValue - minimumValue) * 100.
-        window.printLine(15, "Scanning... (" + str(percentage)[:4] + "%)", "Info", "center")
-
-        # Set Threshold 1
-        glib.setVFAT2(VFAT2, "vthreshold1", VThreshold1)
+        # Set threshold
+        glib.setVFAT2(vfat2ID, "vthreshold1", threshold)
 
         # Send Resync signal
         glib.set("oh_resync", 0x1)
@@ -79,7 +61,11 @@ else:
         hitCount = 0.
 
         # Read tracking packets
-        for i in range(0, nEvents):
+        for event in range(0, nEvents):
+
+            # Percentage
+            percentage = ((threshold - minimumValue) * nEvents + event) / ((maximumValue - minimumValue) * nEvents * 1.) * 100.
+            window.printLine(13, "Scanning... (" + str(percentage)[:5] + "%)", "Info", "center")
 
             # Send 5 LV1A signal (to be sure...)
             glib.set("oh_lv1a", 0x1)
@@ -114,36 +100,27 @@ else:
 
         hitCount /= (nEvents * 1.)
 
+        # Save the points
+        save.writePair(threshold, hitCount)
+
         # Add data
-        threshold.append(VThreshold1)
-        dataPoints.append(hitCount)
+        thresholdValues.append(threshold)
+        hitValues.append(hitCount)
 
         # Update plot
-        graph(threshold, dataPoints, minimumValue, maximumValue, 0, 1, "Threshold", "Percentage of hits")
+        graph(thresholdValues, hitValues, minimumValue, maximumValue, 0, 1, "Threshold", "Percentage of hits")
 
-        # Wait a bit
-        time.sleep(0.1)
+    # Reset the VFAT2 parameters
+    glib.restoreVFAT2(vfat2ID, vfat2Parameters)
 
-    # Restore old thresold
-    glib.setVFAT2(VFAT2, "vthreshold1", oldThreshold)
-
-    # Write to file
-    if (saveResults):
-        fileName = "../../test-beam-data/threshold/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
-        f = open(fileName,"w")
-        f.write("VThreshold1 Scan\n")
-        f.write("Time: " + time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime()) + "\n")
-        f.write("VFAT2: " + str(VFAT2) + "\n")
-        f.write("Number of events: " + str(nEvents) + "\n")
-        f.write("_".join(map(str, threshold)) + "\n")
-        f.write("_".join(map(str, dataPoints)) + "\n")
-        f.close()
+    # Close the save file
+    save.close()
 
     # Success
-    window.printLine(15, "Scan finished!", "Success", "center")
+    window.printLine(13, "Scan finished!", "Success", "center")
 
 # Wait before quiting
-window.waitQuit()
+window.waitForQuit()
 
 # Close window
 window.close()

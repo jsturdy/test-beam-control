@@ -3,7 +3,7 @@ import time
 from system import *
 
 # Create window
-window = Window("Latency scan")
+window = Window("Scan a VFAT2's latency")
 
 # Get GLIB access
 glib = GLIB()
@@ -13,10 +13,7 @@ glib.setWindow(window)
 window.printLine(4, "For this scan to work, the VFAT2 has to be biased and running!", "Warning", "center")
 
 # Get a VFAT2 number
-window.printBox(0, 6, 30, "Select a VFAT2 to scan [8-13]:", "Default", "left")
-inputData = window.getInt(31, 6, 2)
-VFAT2 = 8 if (inputData < 8 or inputData > 13) else inputData
-window.printBox(31, 6, 3, str(VFAT2), "Input", "left")
+vfat2ID = window.inputInt(6, "Select a VFAT2 to scan [8-13]:", 2, 8, 13, 8)
 
 # Test if VFAT2 is running
 if ((glib.getVFAT2(8, "ctrl0") & 0x1) != 0x1):
@@ -26,45 +23,33 @@ if ((glib.getVFAT2(8, "ctrl0") & 0x1) != 0x1):
 else:
 
     # Limits select
-    window.printBox(0, 8, 27, "Scan latency from [0-255]:", "Default", "left")
-    inputData = window.getInt(27, 8, 3)
-    minimumValue = 0 if (inputData < 0 or inputData > 255)  else inputData
-    window.printBox(27, 8, 3, str(minimumValue), "Input", "left")
-
-    window.printBox(32, 8, 4, "to", "Default", "left")
-    inputData = window.getInt(35, 8, 3)
-    maximumValue = 255 if (inputData < 0 or inputData > 255)  else inputData
-    window.printBox(35, 8, 3, str(maximumValue), "Input", "left")
+    minimumValue = window.inputInt(8, "Scan latency from [0-255]:", 3, 0, 255, 0)
+    maximumValue = window.inputIntShifted(32, 8, "to ["+str(minimumValue)+"-255]:", 3, minimumValue, 255, 255)
 
     # Events per threshold
-    window.printBox(0, 10, 36, "Number of events per latency [100]:", "Default", "left")
-    inputData = window.getInt(36, 10, 5)
-    nEvents = 100 if (inputData < 0) else inputData
-    window.printBox(36, 10, 5, str(nEvents), "Input", "left")
-
-    # Save results
-    window.printBox(0, 12, 4, "Save the results [Y/n]:", "Default", "left")
-    inputData = window.getChar(24, 12)
-    saveResults = True if (inputData == "y" or inputData == "Y" or inputData == False)  else False
-    window.printBox(24, 12, 3, ("Yes" if saveResults else "No"), "Input", "left")
+    nEvents = window.inputInt(10, "Number of events per value (100):", 5, 0, 1000, 100)
 
     # Wait before starting
-    window.printLine(14, "Press [s] to start the scan.", "Info", "center")
+    window.printLine(12, "Press [s] to start the scan.", "Info", "center")
     window.waitForKey("s")
 
-    # Create a plot and its data
-    latencies = []
-    dataPoints = []
+    # Save VFAT2's parameters
+    vfat2Parameters = glib.saveVFAT2(vfat2ID)
 
-    # Loop over Threshold 1
+    # Open the save file
+    save = Save("latency")
+    save.writeDict(vfat2Parameters)
+    save.writeLine("-----")
+
+    # Create a plot and its data
+    latencyValues = []
+    hitValues = []
+
+    # Loop over latencies
     for latency in range(minimumValue, maximumValue):
 
-        # Percentage
-        percentage = (latency - minimumValue) / (1. * maximumValue - minimumValue) * 100.
-        window.printLine(15, "Scanning... (" + str(percentage)[:4] + "%)", "Info", "center")
-
-        # Set Threshold 1
-        glib.setVFAT2(VFAT2, "latency", latency)
+        # Set latency
+        glib.setVFAT2(vfat2ID, "latency", latency)
 
         # Send Resync signal
         glib.set("oh_resync", 0x1)
@@ -76,7 +61,11 @@ else:
         hitCount = 0.
 
         # Read tracking packets
-        for i in range(0, nEvents):
+        for event in range(0, nEvents):
+
+            # Percentage
+            percentage = ((latency - minimumValue) * nEvents + event) / ((maximumValue - minimumValue) * nEvents * 1.) * 100.
+            window.printLine(13, "Scanning... (" + str(percentage)[:5] + "%)", "Info", "center")
 
             # Get a tracking packet (with a limit)
             while (True):
@@ -103,36 +92,27 @@ else:
 
         hitCount /= (nEvents * 1.)
 
+        # Save the points
+        save.writePair(threshold, hitCount)
+
         # Add data
-        latencies.append(latency)
-        dataPoints.append(hitCount)
+        latencyValues.append(latency)
+        hitValues.append(hitCount)
 
         # Update plot
-        #graph(latencies, dataPoints, 0, 255, 0, 1, "Latency", "Percentage of hits")
+        graph(latencyValues, hitValues, minimumValue, maximumValue, 0, 1, "Latency", "Percentage of hits")
 
-        # Wait a bit
-        time.sleep(0.1)
+    # Reset the VFAT2 parameters
+    glib.restoreVFAT2(vfat2ID, vfat2Parameters)
 
-    # Restore old parameters
-    glib.setVFAT2(VFAT2, "latency", 0)
-
-    # Write to file
-    if (saveResults):
-        fileName = "../../test-beam-data/latency/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
-        f = open(fileName,"w")
-        f.write("Latency Scan\n")
-        f.write("Time: " + time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime()) + "\n")
-        f.write("VFAT2: " + str(VFAT2) + "\n")
-        f.write("Number of events: " + str(nEvents) + "\n")
-        f.write("_".join(map(str, latencies)) + "\n")
-        f.write("_".join(map(str, dataPoints)) + "\n")
-        f.close()
+    # Close the save file
+    save.close()
 
     # Success
-    window.printLine(15, "Scan finished!", "Success", "center")
+    window.printLine(13, "Scan finished!", "Success", "center")
 
 # Wait before quiting
-window.waitQuit()
+window.waitForQuit()
 
 # Close window
 window.close()

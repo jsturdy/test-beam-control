@@ -15,11 +15,16 @@ window.waitForKey("s")
 # Empty the buffers
 glib.set('glib_empty_tracking_data', 0)
 
+# Log the changes
+save = Save("log")
+save.writeLine("Tracking data buffer emptied")
+save.close()
+
 # Design
 window.printLine(5, "Tracking buffers emptied!", "Success", "center")
 
 # Wait before quiting
-window.waitQuit()
+window.waitForQuit()
 
 # Close window
 window.close()

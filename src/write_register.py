@@ -9,7 +9,6 @@ glib = GLIB()
 glib.setWindow(window)
 
 # Get a register address
-window.printBox(0, 4, 26, "Register address [0-32]:", "Default", "left")
 window.printBox(0, 5, 26, "0: GLIB error cnt rst")
 window.printBox(26, 5, 26, "1: GLIB VFAT2 RX cnt rst")
 window.printBox(52, 5, 26, "2: GLIB VFAT2 TX cnt rst")
@@ -43,16 +42,10 @@ window.printBox(52, 14, 26, "29: OH del Cal cnt rst")
 window.printBox(0, 15, 26, "30: OH Cal cnt rst")
 window.printBox(26, 15, 26, "31: OH Resync cnt rst")
 window.printBox(52, 15, 26, "32: OH BC0 cnt rst")
-
-inputData = window.getInt(26, 4, 2)
-regId = 0 if (inputData < 0 or inputData > 32) else inputData
-window.printBox(26, 4, 2, str(regId), "Input", "left")
+regId = window.inputInt(4, "Register address [0-32]:", 2, 0, 32, 0)
 
 # Set the value
-window.printBox(0, 17, 16, "Register value:", "Default", "left")
-inputData = window.getInt(16, 17, 5)
-regValue = 0 if (inputData < 0) else inputData
-window.printBox(16, 17, 10, str(regValue), "Input", "left")
+regValue = window.inputInt(17, "Register value:", 10, 0, 500000, 0)
 
 window.printLine(19, "Press [s] to apply the changes.", "Info", "center")
 window.waitForKey("s")
@@ -129,7 +122,7 @@ elif (regId == 32):
 window.printLine(20, "Value written!", "Success", "center")
 
 # Wait before quiting
-window.waitQuit()
+window.waitForQuit()
 
 # Close window
 window.close()

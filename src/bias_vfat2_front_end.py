@@ -9,96 +9,83 @@ glib = GLIB()
 glib.setWindow(window)
 
 # Get a VFAT2 number
-window.printBox(0, 4, 30, "Select a VFAT2 to scan [8-13]:", "Default", "left")
-inputData = window.getInt(31, 4, 2)
-VFAT2 = 8 if (inputData < 8 or inputData > 13) else inputData
-window.printBox(31, 4, 3, str(VFAT2), "Input", "left")
+vfat2ID = window.inputInt(4, "Select a VFAT2 to scan [8-13]:", 2, 8, 13, 8)
 
 # Test if VFAT2 is present
-if (glib.isVFAT2(VFAT2) == False):
+if (glib.isVFAT2(vfat2ID) == False):
     # Error
     window.printLine(6, "The selected VFAT2 is not present!", "Error", "center")
 
 else:
 
     # Description
-    window.printLine(6, "Register    [Range] [Recommended] (Current)", "Default", "left")
+    window.printLine(6, "Register    [Range] [Recommended] (Current)")
 
     # Get a IPreampIn
-    current = glib.getVFAT2(VFAT2, "ipreampin")
-    window.printBox(0, 7, 33, "IPreampIn   [0-255] [168] (" + str(current) + "):", "Default", "left")
-    inputData = window.getInt(33, 7, 3)
-    IPreampIn = current if (inputData < 0 or inputData > 255) else inputData
-    window.printBox(33, 7, 3, str(IPreampIn), "Input", "left")
+    current = glib.getVFAT2(vfat2ID, "ipreampin")
+    IPreampIn = window.inputInt(7, "IPreampIn   [0-255] [168] (" + str(current) + "):", 3, 0, 255, current)
 
     # Get a IPreampFeed
-    current = glib.getVFAT2(VFAT2, "ipreampfeed")
-    window.printBox(0, 8, 33, "IPreampFeed [0-255] [80]  (" + str(current) + "):", "Default", "left")
-    inputData = window.getInt(33, 8, 3)
-    IPreampFeed = current if (inputData < 0 or inputData > 255) else inputData
-    window.printBox(33, 8, 3, str(IPreampFeed), "Input", "left")
+    current = glib.getVFAT2(vfat2ID, "ipreampfeed")
+    IPreampFeed = window.inputInt(8, "IPreampFeed [0-255] [80]  (" + str(current) + "):", 3, 0, 255, current)
 
     # Get a IPreampOut
-    current = glib.getVFAT2(VFAT2, "ipreampout")
-    window.printBox(0, 9, 33, "IPreampOut  [0-255] [150] (" + str(current) + "):", "Default", "left")
-    inputData = window.getInt(33, 9, 3)
-    IPreampOut = current if (inputData < 0 or inputData > 255) else inputData
-    window.printBox(33, 9, 3, str(IPreampOut), "Input", "left")
+    current = glib.getVFAT2(vfat2ID, "ipreampout")
+    IPreampOut = window.inputInt(9, "IPreampOut  [0-255] [150] (" + str(current) + "):", 3, 0, 255, current)
 
     # Get a IShaper
-    current = glib.getVFAT2(VFAT2, "ishaper")
-    window.printBox(0, 10, 33, "IShaper     [0-255] [150] (" + str(current) + "):", "Default", "left")
-    inputData = window.getInt(33, 10, 3)
-    IShaper = current if (inputData < 0 or inputData > 255) else inputData
-    window.printBox(33, 10, 3, str(IShaper), "Input", "left")
+    current = glib.getVFAT2(vfat2ID, "ishaper")
+    IShaper = window.inputInt(10, "IShaper     [0-255] [150] (" + str(current) + "):", 3, 0, 255, current)
 
     # Get a IShaperFeed
-    current = glib.getVFAT2(VFAT2, "ishaperfeed")
-    window.printBox(0, 11, 33, "IShaperFeed [0-255] [100] (" + str(current) + "):", "Default", "left")
-    inputData = window.getInt(33, 11, 3)
-    IShaperFeed = current if (inputData < 0 or inputData > 255) else inputData
-    window.printBox(33, 11, 3, str(IShaperFeed), "Input", "left")
+    current = glib.getVFAT2(vfat2ID, "ishaperfeed")
+    IShaperFeed = window.inputInt(11, "IShaperFeed [0-255] [100] (" + str(current) + "):", 3, 0, 255, current)
 
     # Get a IComp
-    current = glib.getVFAT2(VFAT2, "icomp")
-    window.printBox(0, 12, 33, "IComp       [0-255] [120] (" + str(current) + "):", "Default", "left")
-    inputData = window.getInt(33, 12, 3)
-    IComp = current if (inputData < 0 or inputData > 255) else inputData
-    window.printBox(33, 12, 3, str(IComp), "Input", "left")
+    current = glib.getVFAT2(vfat2ID, "icomp")
+    IComp = window.inputInt(12, "IComp       [0-255] [120] (" + str(current) + "):", 3, 0, 255, current)
 
     # Get a VThreshold1
-    current = glib.getVFAT2(VFAT2, "vthreshold1")
-    window.printBox(0, 13, 33, "VThreshold1 [0-255] [10]  (" + str(current) + "):", "Default", "left")
-    inputData = window.getInt(33, 13, 3)
-    VThreshold1 = current if (inputData < 0 or inputData > 255) else inputData
-    window.printBox(33, 13, 3, str(VThreshold1), "Input", "left")
+    current = glib.getVFAT2(vfat2ID, "vthreshold1")
+    VThreshold1 = window.inputInt(13, "VThreshold1 [0-255] [10]  (" + str(current) + "):", 3, 0, 255, current)
 
     # Get a VThreshold2
-    current = glib.getVFAT2(VFAT2, "vthreshold2")
-    window.printBox(0, 14, 33, "VThreshold2 [0-255] [0]   (" + str(current) + "):", "Default", "left")
-    inputData = window.getInt(33, 14, 3)
-    VThreshold2 = current if (inputData < 0 or inputData > 255) else inputData
-    window.printBox(33, 14, 3, str(VThreshold2), "Input", "left")
+    current = glib.getVFAT2(vfat2ID, "vthreshold2")
+    VThreshold2 = window.inputInt(14, "VThreshold2 [0-255] [0]   (" + str(current) + "):", 3, 0, 255, current)
 
+    #
     window.printLine(16, "Press [s] to bias the front-end.", "Info", "center")
     window.waitForKey("s")
 
     # Bias front-end
-    glib.setVFAT2(VFAT2, "ipreampin", IPreampIn)
-    glib.setVFAT2(VFAT2, "ipreampfeed", IPreampFeed)
-    glib.setVFAT2(VFAT2, "ipreampout", IPreampOut)
-    glib.setVFAT2(VFAT2, "ishaper", IShaper)
-    glib.setVFAT2(VFAT2, "ishaperfeed", IShaperFeed)
-    glib.setVFAT2(VFAT2, "icomp", IComp)
-    glib.setVFAT2(VFAT2, "vthreshold1", VThreshold1)
-    glib.setVFAT2(VFAT2, "vthreshold2", VThreshold2)
+    glib.setVFAT2(vfat2ID, "ipreampin", IPreampIn)
+    glib.setVFAT2(vfat2ID, "ipreampfeed", IPreampFeed)
+    glib.setVFAT2(vfat2ID, "ipreampout", IPreampOut)
+    glib.setVFAT2(vfat2ID, "ishaper", IShaper)
+    glib.setVFAT2(vfat2ID, "ishaperfeed", IShaperFeed)
+    glib.setVFAT2(vfat2ID, "icomp", IComp)
+    glib.setVFAT2(vfat2ID, "vthreshold1", VThreshold1)
+    glib.setVFAT2(vfat2ID, "vthreshold2", VThreshold2)
     glib.set("oh_resync", 1)
+
+    # Log the changes
+    save = Save("log")
+    save.writeLine("VFAT2 front end-biased")
+    save.writePair("ipreampin", IPreampIn)
+    save.writePair("ipreampfeed", IPreampFeed)
+    save.writePair("ipreampout", IPreampOut)
+    save.writePair("ishaper", IShaper)
+    save.writePair("ishaperfeed", IShaperFeed)
+    save.writePair("icomp", IComp)
+    save.writePair("vthreshold1", VThreshold1)
+    save.writePair("vthreshold2", VThreshold2)
+    save.close()
 
     # Success
     window.printLine(17, "Front-end biased!", "Success", "center")
 
 # Wait before quiting
-window.waitQuit()
+window.waitForQuit()
 
 # Close window
 window.close()

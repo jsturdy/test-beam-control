@@ -35,11 +35,16 @@ glib.set('oh_reset_calpulse_counter', 0)
 glib.set('oh_reset_resync_counter', 0)
 glib.set('oh_reset_bc0_counter', 0)
 
+# Log the changes
+save = Save("log")
+save.writeLine("Counters reseted")
+save.close()
+
 # Design
 window.printLine(5, "Counters reseted!", "Success", "center")
 
 # Wait before quiting
-window.waitQuit()
+window.waitForQuit()
 
 # Close window
 window.close()

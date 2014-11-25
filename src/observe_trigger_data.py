@@ -16,14 +16,14 @@ glib.set("glib_empty_trigger_data", 0)
 window.printLine(4, "Press [s] to get a new data packet.", "Info", "center")
 
 # Design
-window.printBox(0, 6, 7, "BX:", "Default", "left")
-window.printBox(0, 7, 7, "SBits:", "Default", "left")
+window.printBox(0, 6, 7, "BX:")
+window.printBox(0, 7, 7, "SBits:")
 
 # Get data
 while(True):
 
-    window.printBox(7, 6, 10, "", "Default", "left")
-    window.printBox(7, 7, 7, "", "Default", "left")
+    window.printBox(7, 6, 10, "")
+    window.printBox(7, 7, 7, "")
 
     time.sleep(0.1)
 
@@ -32,8 +32,8 @@ while(True):
     bx = hex((0xffffffc0 & packet1) >> 6)
     sbits = bin(0x0000003f & packet1)[2:].zfill(6)
 
-    window.printBox(7, 6, 10, bx, "Default", "left")
-    window.printBox(7, 7, 7, sbits, "Default", "left")
+    window.printBox(7, 6, 10, bx)
+    window.printBox(7, 7, 7, sbits)
 
     # Wait for Start signal
     window.waitForKey("s")

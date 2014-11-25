@@ -15,11 +15,16 @@ window.waitForKey("s")
 # Empty the buffers
 glib.set('glib_empty_trigger_data', 0)
 
+# Log the changes
+save = Save("log")
+save.writeLine("Trigger data buffer emptied")
+save.close()
+
 # Design
 window.printLine(5, "Trigger buffers emptied!", "Success", "center")
 
 # Wait before quiting
-window.waitQuit()
+window.waitForQuit()
 
 # Close window
 window.close()
