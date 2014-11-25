@@ -1,6 +1,6 @@
 # System imports
 import time
-from system import *
+from kernel import *
 
 # Create window
 window = Window("Scan a VFAT2's DAC")
@@ -12,35 +12,35 @@ glib.setWindow(window)
 # Get a VFAT2 number
 vfat2ID = window.inputInt(4, "Select a VFAT2 to scan [8-13]:", 2, 8, 13, 8)
 
-# Get the DAC to scan
-window.printBox(0, 7, 20, "1: IPreampIn")
-window.printBox(20, 7, 20, "2: IPreampFeed")
-window.printBox(40, 7, 20, "3: IPreampOut")
-window.printBox(60, 7, 20, "4: IShaper")
-window.printBox(0, 8, 20, "5: IShaperFeed")
-window.printBox(20, 8, 20, "6: IComp")
-window.printBox(40, 8, 20, "7: VThreshold1")
-window.printBox(60, 8, 20, "8: VThreshold2")
-window.printBox(0, 9, 20, "9: VCal")
-DAC = window.inputInt(6, "Select a DAC to scan [1-9]:", 1, 1, 9, 1)
-
-# Limits select
-minimumValue = window.inputInt(11, "Scan DAC from [0-255]:", 3, 0, 255, 0)
-maximumValue = window.inputIntShifted(28, 11, "to ["+str(minimumValue)+"-255]:", 3, minimumValue, 255, 255)
-
-# Events per threshold
-nEvents = window.inputInt(13, "Number of events per value (100):", 5, 0, 1000, 100)
-
-# Wait before starting
-window.printLine(15, "Press [s] to start the scan.", "Info", "center")
-window.waitForKey("s")
-
 # Test if VFAT2 is present
 if (glib.isVFAT2(vfat2ID) == False):
     # Error
-    window.printLine(16, "The selected VFAT2 is not present!", "Error", "center")
+    window.printLine(6, "The selected VFAT2 is not present!", "Error", "center")
 #
 else:
+
+    # Get the DAC to scan
+    window.printBox(0, 7, 20, "1: IPreampIn")
+    window.printBox(20, 7, 20, "2: IPreampFeed")
+    window.printBox(40, 7, 20, "3: IPreampOut")
+    window.printBox(60, 7, 20, "4: IShaper")
+    window.printBox(0, 8, 20, "5: IShaperFeed")
+    window.printBox(20, 8, 20, "6: IComp")
+    window.printBox(40, 8, 20, "7: VThreshold1")
+    window.printBox(60, 8, 20, "8: VThreshold2")
+    window.printBox(0, 9, 20, "9: VCal")
+    DAC = window.inputInt(6, "Select a DAC to scan [1-9]:", 1, 1, 9, 1)
+
+    # Limits select
+    minimumValue = window.inputInt(11, "Scan DAC from [0-255]:", 3, 0, 255, 0)
+    maximumValue = window.inputIntShifted(28, 11, "to ["+str(minimumValue)+"-255]:", 3, minimumValue, 255, 255)
+
+    # Events per threshold
+    nEvents = window.inputInt(13, "Number of events per value [0-99999] (100):", 5, 1, 99999, 100)
+
+    # Wait before starting
+    window.printLine(15, "Press [s] to start the scan.", "Info", "center")
+    window.waitForKey("s")
 
     # Save VFAT2's parameters
     vfat2Parameters = glib.saveVFAT2(vfat2ID)

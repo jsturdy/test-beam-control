@@ -1,6 +1,6 @@
 # System imports
 import time
-from system import *
+from kernel import *
 
 # Create window
 window = Window("Scan a VFAT2's threshold")
@@ -27,7 +27,7 @@ else:
     maximumValue = window.inputIntShifted(34, 8, "to ["+str(minimumValue)+"-255]:", 3, minimumValue, 255, 255)
 
     # Events per threshold
-    nEvents = window.inputInt(10, "Number of events per value (100):", 5, 0, 1000, 100)
+    nEvents = window.inputInt(10, "Number of events per value [1-99999] (100):", 5, 1, 99999, 100)
 
     # Wait before starting
     window.printLine(12, "Press [s] to start the scan.", "Info", "center")
