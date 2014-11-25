@@ -13,7 +13,7 @@ window.printLine(4, "Press [s] to empty the tracking data buffer.", "Info", "cen
 window.waitForKey("s")
 
 # Empty the buffers
-glib.set('glib_empty_tracking_data', 0)
+glib.set("glib_empty_tracking_data", 0)
 
 # Log the changes
 save = Save("log")

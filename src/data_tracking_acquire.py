@@ -71,7 +71,7 @@ while(True):
         isNewData = glib.get("glib_request_tracking_data")
         time.sleep(0.01)
 
-        if (isNewData == 0x0):
+        if (isNewData == 0x1):
             break
 
     packet1 = glib.get("glib_tracking_data_1")

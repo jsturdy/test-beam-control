@@ -13,7 +13,7 @@ window.printLine(4, "Press [s] to empty the trigger data buffer.", "Info", "cent
 window.waitForKey("s")
 
 # Empty the buffers
-glib.set('glib_empty_trigger_data', 0)
+glib.set("glib_empty_trigger_data", 0)
 
 # Log the changes
 save = Save("log")

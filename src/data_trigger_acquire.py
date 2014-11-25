@@ -20,7 +20,7 @@ window.waitForKey("s")
 window.printBox(0, 9, 7, "BX:")
 window.printBox(0, 10, 7, "SBits:")
 
-# Save VFAT2's parameters
+# Save VFAT2"s parameters
 vfat2Parameters = [None] * 6
 vfat2Parameters[0] = glib.saveVFAT2(8)
 vfat2Parameters[1] = glib.saveVFAT2(9)
@@ -76,7 +76,7 @@ while(True):
 
     # Histogram
     for i in range(0, 6):
-        strips[i] += (1 if (sbits[i] == '1') else 0)
+        strips[i] += (1 if (sbits[i] == "1") else 0)
 
     graph1D(strips, 0, 5)
 
