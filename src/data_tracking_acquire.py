@@ -16,16 +16,7 @@ runNumber = window.inputInt(4, "Run number [0-99999]:", 5, 0, 99999, 0)
 window.printLine(6, "Press [s] to start the data taking and [ctrl+c] to quit.", "Info", "center")
 window.waitForKey("s")
 
-# Design
-window.printBox(0, 9, 8, "BC:")
-window.printBox(0, 10, 8, "EC:")
-window.printBox(0, 11, 8, "ChipID:")
-window.printBox(0, 12, 8, "Data 1:")
-window.printBox(0, 13, 8, "Data 2:")
-window.printBox(0, 14, 8, "Data 3:")
-window.printBox(0, 15, 8, "Data 4:")
-window.printBox(0, 16, 8, "CRC:")
-window.printBox(0, 17, 8, "BX:")
+window.printLine(7, "Preparing acquisition...", "Info", "center")
 
 # Save VFAT2's parameters
 vfat2Parameters = [None] * 6
@@ -52,6 +43,17 @@ save.writeDict(vfat2Parameters[4])
 save.writeLine("-----")
 save.writeDict(vfat2Parameters[5])
 save.writeLine("-----")
+
+# Design
+window.printBox(0, 9, 8, "BC:")
+window.printBox(0, 10, 8, "EC:")
+window.printBox(0, 11, 8, "ChipID:")
+window.printBox(0, 12, 8, "Data 1:")
+window.printBox(0, 13, 8, "Data 2:")
+window.printBox(0, 14, 8, "Data 3:")
+window.printBox(0, 15, 8, "Data 4:")
+window.printBox(0, 16, 8, "CRC:")
+window.printBox(0, 17, 8, "BX:")
 
 # Events
 nEvents = 0
