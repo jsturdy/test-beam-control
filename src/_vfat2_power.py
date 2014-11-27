@@ -34,7 +34,7 @@ window.waitForKey("s")
 
 #
 for i in range(0, 6):
-    if (glib.isVFAT2(i + 8) == 1):
+    if (glib.isVFAT2Present(i + 8) == True):
         config = glib.getVFAT2(i + 8, 'ctrl0')
         if (VFAT2[i] == 1):
             glib.setVFAT2(i + 8, 'ctrl0', 0x37)

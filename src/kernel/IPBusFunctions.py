@@ -85,7 +85,7 @@ class GLIB:
         return self.set("vfat2_" + str(num) + "_" + register, value, ignoreError)
 
     # Test if VFAT2 is connected
-    def isVFAT2(self, num):
+    def isVFAT2Present(self, num):
         # Test read
         chipId = self.get("vfat2_" + str(num) + "_chipid0", True)
         #
@@ -96,10 +96,24 @@ class GLIB:
         else:
             return True
 
+    # Test if VFAT2 is connected
+    def isVFAT2Running(self, num):
+        # Test read
+        ctrl0 = self.get("vfat2_" + str(num) + "_ctrl0", True)
+        #
+        if (ctrl0 == False):
+            return False
+        elif (((ctrl0 & 0x4000000) >> 26) == 1):
+            return False
+        elif ((ctrl0 & 0x1) == 0x1):
+            return True
+        else:
+            return False
+
     # Save VFAT2 configuration
     def saveVFAT2(self, num):
-        if (self.isVFAT2(num) == False):
-            return []
+        if (self.isVFAT2Present(num) == False):
+            return dict()
         else:
             data = dict()
             data["ctrl0"] = self.getVFAT2(num, "ctrl0")
@@ -123,13 +137,11 @@ class GLIB:
             data["vthreshold1"] = self.getVFAT2(num, "vthreshold1")
             data["vthreshold2"] = self.getVFAT2(num, "vthreshold2")
             data["calphase"] = self.getVFAT2(num, "calphase")
-            for i in range(1, 129):
-                data["channel"+str(i)] = self.getVFAT2(num, "channel"+str(i))
             return data
 
     # Restore VFAT2 configuration
     def restoreVFAT2(self, num, data):
-        if (self.isVFAT2(num) == False):
+        if (self.isVFAT2Present(num) == False):
             return False
         else:
             self.setVFAT2(num, "ctrl0", data["ctrl0"])
@@ -147,8 +159,6 @@ class GLIB:
             self.setVFAT2(num, "vthreshold1", data["vthreshold1"])
             self.setVFAT2(num, "vthreshold2", data["vthreshold2"])
             self.setVFAT2(num, "calphase", data["calphase"])
-            for i in range(1, 129):
-                self.setVFAT2(num, "channel"+str(i), data["channel"+str(i)])
             self.set("oh_resync", 0x1)
             return True
 

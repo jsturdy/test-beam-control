@@ -1,4 +1,4 @@
-import curses, sys, signal
+import curses, sys, signal, time
 
 class Window():
 
@@ -38,9 +38,7 @@ class Window():
         self.defineColor("Input", 0, 11)
         self.defineColor("InputWait", 0, 13)
         # Draw the title
-        self.printLine(0, "", "Title")
-        self.printLine(1, title.upper(), "Title", "center")
-        self.printLine(2, "", "Title")
+        self.printLine(0, title.upper(), "Title", "center")
 
     # Close the curses window
     def close(self):
@@ -49,6 +47,15 @@ class Window():
         self.window.keypad(0)
         curses.echo()
         curses.endwin()
+
+    # Go to non-blocking mode
+    def disableBlocking(self):
+        self.window.nodelay(1)
+
+    # Go to block mode
+    def enableBlocking(self):
+        self.window.nodelay(0)
+
 
     #####################################
     #   Handle signals                  #
@@ -85,10 +92,8 @@ class Window():
     def printString(self, x, y, string, color = "Default"):
         # Avoid going outside the terminal
         height, width = self.window.getmaxyx()
-        if (y >= height):
-            y = height - 1
-        if (y == height - 1 and len(string) >= width - 1):
-            string = string[:width-1]
+        if (y >= height): y = height - 1
+        if (y == height - 1 and (x + len(string)) >= width - 1): string = string[:(width-x-1)]
 
         # Print the string
         self.window.addstr(y, x, string, curses.color_pair(self.colors[color]))
@@ -113,6 +118,11 @@ class Window():
         # Print the string
         self.printString(x, y, text, color)
 
+    # Print a box of text
+    def printLabel(self, x, y, width, string, value, color = "Default"):
+        text = string + " " + (" " * (width - len(string) - len(str(value)) - 1)) + str(value)
+        self.printString(x, y, text, color)
+
     #####################################
     #   Print a full line               #
     #####################################
@@ -121,8 +131,22 @@ class Window():
     def printLine(self, y, string, color = "Default", aligned = "left"):
         # Get the screen size
         height, width = self.window.getmaxyx()
+        #
+        if (y < 0): y = height + y
         # Print the string
         self.printBox(0, y, width, string, color, aligned)
+
+    # Clear the screen (except title)
+    def clear(self, fromY = 1, toY = 0):
+        height, width = self.window.getmaxyx()
+        toY = height - toY
+        for i in range(fromY, toY):
+            self.printLine(i, "")
+
+    # Clear the screen (except title)
+    def clearLine(self, y):
+        self.printLine(y, "")
+
 
     #####################################
     #   Print an error and quit         #
@@ -134,10 +158,20 @@ class Window():
         height, width = self.window.getmaxyx()
         # Print the string
         self.printString(0, height - 2, string, "Error")
+        #
+        time.sleep(1)
+        #
+        self.printString(0, height - 2, (" " * len(string)))
+
+
 
     #####################################
     #   Basic input functions           #
     #####################################
+
+    # Compare a char to what we get
+    def getChr(self):
+        return self.window.getch()
 
     # Get a character
     def getChar(self, x, y):
@@ -174,13 +208,13 @@ class Window():
         return False if (len(string) == 0) else string
 
     # Get an integer
-    def getInt(self, x, y, length = 50):
+    def getInt(self, x, y, length = 50, placeholder = " "):
         # Enable echo mode
         curses.echo()
         # Get string
         while(True):
             # Mask previous text
-            self.printBox(x, y, length, " ", "InputWait")
+            self.printBox(x, y, length, str(placeholder), "InputWait")
             # Get text
             string = self.window.getstr(y, x, length)
             if (string.isdigit() or len(string) == 0):
@@ -201,7 +235,7 @@ class Window():
     def inputIntShifted(self, x, y, label, size = 3, minValue = 0, maxValue = 255, defaultValue = 0):
         labelLength = len(label) + 1
         self.printBox(x, y, labelLength, label, "Default", "left")
-        inputData = self.getInt(x + labelLength, y, size)
+        inputData = self.getInt(x + labelLength, y, size, defaultValue)
         value = defaultValue if (inputData < minValue or inputData > maxValue) else inputData
         self.printBox(x + labelLength, y, size, str(value), "Input", "left")
         return value

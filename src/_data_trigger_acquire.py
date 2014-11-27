@@ -16,9 +16,7 @@ runNumber = window.inputInt(4, "Run number [0-99999]:", 5, 0, 99999, 0)
 window.printLine(6, "Press [s] to start the data taking and [ctrl+c] to quit.", "Info", "center")
 window.waitForKey("s")
 
-# Design
-window.printBox(0, 9, 7, "BX:")
-window.printBox(0, 10, 7, "SBits:")
+window.printLine(7, "Preparing acquisition...", "Info", "center")
 
 # Save VFAT2"s parameters
 vfat2Parameters = [None] * 6
@@ -45,6 +43,10 @@ save.writeDict(vfat2Parameters[4])
 save.writeLine("-----")
 save.writeDict(vfat2Parameters[5])
 save.writeLine("-----")
+
+# Design
+window.printBox(0, 9, 7, "BX:")
+window.printBox(0, 10, 7, "SBits:")
 
 # Events
 nEvents = 0

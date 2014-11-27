@@ -12,7 +12,7 @@ glib.setWindow(window)
 vfat2ID = window.inputInt(4, "Select the VFAT2 to read from [8-13]:", 2, 8, 13, 8)
 
 # Test if VFAT2 is present
-if (glib.isVFAT2(vfat2ID) == False):
+if (glib.isVFAT2Present(vfat2ID) == False):
     # Error
     window.printLine(6, "The selected VFAT2 is not present!", "Error", "center")
 #

@@ -38,6 +38,12 @@ else:
 
     # Open the save file
     save = Save("latency")
+    save.writeLine("-----")
+    save.writePair("VFAT2 ID", vfat2ID)
+    save.writePair("from", minimumValue)
+    save.writePair("to", maximumValue)
+    save.writePair("events", nEvents)
+    save.writeLine("-----")
     save.writeDict(vfat2Parameters)
     save.writeLine("-----")
 

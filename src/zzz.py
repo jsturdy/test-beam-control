@@ -1,5 +1,5 @@
 # System imports
-from system import *
+from kernel import *
 
 # Create window
 window = Window("Write a GLIB or OptoHybrid register")
