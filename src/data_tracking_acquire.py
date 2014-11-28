@@ -10,13 +10,13 @@ glib = GLIB()
 glib.setWindow(window)
 
 # Get run number
-runNumber = window.inputInt(4, "Run number [0-99999]:", 5, 0, 99999, 0)
+runNumber = window.inputInt(1, "Run number [0-99999]:", 5, 0, 99999, 0)
 
 # Design
-window.printLine(6, "Press [s] to start the data taking and [ctrl+c] to quit.", "Info", "center")
+window.printLine(3, "Press [s] to start the data taking and [ctrl+c] to quit.", "Info", "center")
 window.waitForKey("s")
 
-window.printLine(7, "Preparing acquisition...", "Info", "center")
+window.printLine(4, "Preparing acquisition...", "Info", "center")
 
 # Save VFAT2's parameters
 vfat2Parameters = [None] * 6
@@ -64,17 +64,12 @@ strips = [0] * 128
 # Get data
 while(True):
 
-    window.printLine(7, str(nEvents) + " saved!", "Info", "center")
+    window.printLine(4, str(nEvents) + " saved!", "Info", "center")
 
     # Get a tracking packet (with a limit)
     while (True):
-
-        # Request new data
-        isNewData = glib.get("glib_request_tracking_data")
+        if (glib.get("glib_request_tracking_data") == 0x1): break
         time.sleep(0.01)
-
-        if (isNewData == 0x1):
-            break
 
     packet1 = glib.get("glib_tracking_data_1")
     packet2 = glib.get("glib_tracking_data_2")
@@ -113,12 +108,9 @@ while(True):
     # Show histogram
     for i in range(0, 31):
         strips[i] += (1 if (data1[i] == '1') else 0)
-    for i in range(0, 31):
-        strips[i + 32] += (1 if (data2[i] == '1') else 0)
-    for i in range(0, 31):
-        strips[i + 64] += (1 if (data3[i] == '1') else 0)
-    for i in range(0, 31):
-        strips[i + 96] += (1 if (data4[i] == '1') else 0)
+        strips[i + 32] += (1 if (data2[i + 32] == '1') else 0)
+        strips[i + 64] += (1 if (data3[i + 64] == '1') else 0)
+        strips[i + 96] += (1 if (data4[i + 96] == '1') else 0)
 
     graph1D(strips, 0, 127)
 

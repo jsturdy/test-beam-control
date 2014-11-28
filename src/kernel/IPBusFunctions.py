@@ -1,4 +1,4 @@
-import sys, os, time, signal, random
+import sys, os, time
 
 # Get IPBus
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/ipbus")
@@ -45,22 +45,24 @@ class GLIB:
 
     # Read operation
     def get(self, register, ignoreError = False):
-        for i in range(0, 5):
+        for i in range(0, 8):
             try:
                 controlChar = self.ipbus.read(register)
                 return controlChar
             except ChipsException, e:
+                time.sleep(0.1)
                 pass
         self.throwError("Could not read " + register, ignoreError)
         return False
 
     # Write operation
     def set(self, register, value, ignoreError = False):
-        for i in range(0, 5):
+        for i in range(0,8):
             try:
                 self.ipbus.write(register, value)
                 return True
             except ChipsException, e:
+                time.sleep(0.1)
                 pass
         self.throwError("Could not write " + register, ignoreError)
         return False
