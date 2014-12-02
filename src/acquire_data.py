@@ -108,7 +108,7 @@ def getDataWindow():
         # Get a tracking packet (with a limit)
         while (True):
             if (glib.get("glib_request_tracking_data") == 0x1): break
-            for i in range(0, 10000):
+            for i in range(0, 100):
                 if (window.getChr() == ord('t')): return
         #
         packet1 = glib.get("glib_tracking_data_1")
