@@ -3,7 +3,7 @@ import time
 from kernel import *
 
 # Create window
-window = Window("Manage tracking data")
+window = Window("Manage data acquisition")
 
 # Get GLIB access
 glib = GLIB()
