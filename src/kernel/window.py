@@ -1,4 +1,4 @@
-import curses, sys, signal, time
+import curses, sys, signal, time, math
 
 class Window():
 
@@ -31,12 +31,15 @@ class Window():
         # Define basic colors
         self.defineColor("Default", 0, -1)
         self.defineColor("Title", 231, 0)
+        self.defineColor("Subtitle", 231, 9)
+        self.defineColor("Highlight", 0, 7)
         self.defineColor("Info", 231, 12)
         self.defineColor("Error", 231, 1)
         self.defineColor("Warning", 231, 3)
         self.defineColor("Success", 231, 2)
         self.defineColor("Input", 0, 11)
-        self.defineColor("InputWait", 0, 13)
+        self.defineColor("InputWait", 231, 5)
+        self.defineColor("Options", 231, 4)
         # Draw the title
         self.printLine(0, title.upper(), "Title", "center")
 
@@ -107,14 +110,9 @@ class Window():
     # Print a box of text
     def printBox(self, x, y, width, string, color = "Default", aligned = "left"):
         # Enlarge the string
-        if (aligned == "left"):
-            text = string + (" " * (width - len(string)))
-        elif (aligned == "center"):
-            spaceBefore = (width - len(string)) / 2
-            spaceAfter = spaceBefore + (width - len(string)) % 2
-            text = (" " * spaceBefore) + string + (" " * spaceAfter)
-        elif (aligned == "right"):
-            text = (" " * (width - len(string))) + string
+        if (aligned == "left"): text = string + (" " * (width - len(string)))
+        elif (aligned == "center"): text = (" " * int(math.floor((width - len(string)) / 2.))) + string + (" " * int(math.ceil((width - len(string)) / 2.)))
+        elif (aligned == "right"): text = (" " * (width - len(string))) + string
         # Print the string
         self.printString(x, y, text, color)
 
@@ -140,8 +138,7 @@ class Window():
     def clear(self, fromY = 1, toY = 0):
         height, width = self.window.getmaxyx()
         toY = height - toY
-        for i in range(fromY, toY):
-            self.printLine(i, "")
+        for i in range(fromY, toY): self.printLine(i, "")
 
     # Clear the screen (except title)
     def clearLine(self, y):
@@ -183,8 +180,7 @@ class Window():
             self.printBox(x, y, 1, " ", "Default")
             # Get text
             string = self.window.getstr(y, x, 1)
-            if (string.isalnum() or len(string) == 0):
-                break
+            if (string.isalnum() or len(string) == 0): break
         # Disable echo mode
         curses.noecho()
         # Return string
@@ -200,8 +196,7 @@ class Window():
             self.printBox(x, y, length, " ", "Default")
             # Get text
             string = self.window.getstr(y, x, length)
-            if (string.isalnum() or len(string) == 0):
-                break
+            if (string.isalnum() or len(string) == 0): break
         # Disable echo mode
         curses.noecho()
         # Return string
@@ -217,8 +212,7 @@ class Window():
             self.printBox(x, y, length, str(placeholder), "InputWait")
             # Get text
             string = self.window.getstr(y, x, length)
-            if (string.isdigit() or len(string) == 0):
-                break
+            if (string.isdigit() or len(string) == 0): break
         # Disable echo mode
         curses.noecho()
         # Return string
@@ -248,8 +242,7 @@ class Window():
     def waitForKey(self, key):
         # Wait for key
         while (True):
-            if (self.window.getch() == ord(key)):
-                return True
+            if (self.window.getch() == ord(key)): return True
 
     # Wait for quit signal
     def waitForQuit(self):
@@ -266,8 +259,7 @@ class Window():
     def drawColor(self):
         height, width = self.window.getmaxyx()
         for i in range(0, curses.COLORS):
-            if (i != 0 and i % 60 == 0):
-                self.window.getstr(0, 0, 1)
+            if (i != 0 and i % 60 == 0): self.window.getstr(0, 0, 1)
             self.defineColor(str(i), -1, i)
             self.printLine(i % 60, str(i), str(i))
 

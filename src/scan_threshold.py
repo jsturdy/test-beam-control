@@ -10,34 +10,40 @@ glib = GLIB()
 glib.setWindow(window)
 
 # Warning
-window.printLine(4, "For this scan to work, the VFAT2 has to be biased and running!", "Warning", "center")
+window.printLine(1, "For this scan to work, the VFAT2 has to be biased and running!", "Warning", "center")
 
 # Get a VFAT2 number
-vfat2ID = window.inputInt(6, "Select a VFAT2 to scan [8-13]:", 2, 8, 13, 8)
+vfat2ID = window.inputInt(2, "Select a VFAT2 to scan [8-13]:", 2, 8, 13, 8)
 
 # Test if VFAT2 is running
-if ((glib.getVFAT2(8, "ctrl0") & 0x1) != 0x1):
+if (glib.isVFAT2Running(vfat2ID) == False):
     # Error
-    window.printLine(8, "VFAT2 not running!", "Error", "center")
+    window.printLine(2, "The selected VFAT2 is not running!", "Error", "center")
 
 else:
 
     # Limits select
-    minimumValue = window.inputInt(8, "Scan threshold from [0-255]:", 3, 0, 255, 0)
-    maximumValue = window.inputIntShifted(34, 8, "to ["+str(minimumValue)+"-255]:", 3, minimumValue, 255, 255)
+    minimumValue = window.inputInt(3, "Scan threshold from [0-255]:", 3, 0, 255, 0)
+    maximumValue = window.inputIntShifted(34, 3, "to ["+str(minimumValue)+"-255]:", 3, minimumValue, 255, 255)
 
     # Events per threshold
-    nEvents = window.inputInt(10, "Number of events per value [1-99999] (100):", 5, 1, 99999, 100)
+    nEvents = window.inputInt(4, "Number of events per value [1-99999] (100):", 5, 1, 99999, 100)
 
     # Wait before starting
-    window.printLine(12, "Press [s] to start the scan.", "Info", "center")
+    window.printLine(6, "Press [s] to start the scan.", "Info", "center")
     window.waitForKey("s")
+    window.printLine(7, "Preparing the scan...", "Info", "center")
 
     # Save VFAT2's parameters
     vfat2Parameters = glib.saveVFAT2(vfat2ID)
 
     # Open the save file
     save = Save("threshold")
+    save.writePair("VFAT2", vfat2ID)
+    save.writePair("from", minimumValue)
+    save.writePair("to", maximumValue)
+    save.writePair("events", nEvents)
+    save.writeLine("-----")
     save.writeDict(vfat2Parameters)
     save.writeLine("-----")
 
@@ -52,10 +58,10 @@ else:
         glib.setVFAT2(vfat2ID, "vthreshold1", threshold)
 
         # Send Resync signal
-        glib.set("oh_resync", 0x1)
+        glib.set("oh_resync", 1)
 
         # Empty tracking fifo
-        glib.set("glib_empty_tracking_data", 0)
+        glib.set("glib_empty_tracking_data", 1)
 
         # Efficiency variable
         hitCount = 0.
@@ -65,24 +71,12 @@ else:
 
             # Percentage
             percentage = ((threshold - minimumValue) * nEvents + event) / ((maximumValue - minimumValue) * nEvents * 1.) * 100.
-            window.printLine(13, "Scanning... (" + str(percentage)[:5] + "%)", "Info", "center")
-
-            # Send 5 LV1A signal (to be sure...)
-            glib.set("oh_lv1a", 0x1)
-            glib.set("oh_lv1a", 0x1)
-            glib.set("oh_lv1a", 0x1)
-            glib.set("oh_lv1a", 0x1)
-            glib.set("oh_lv1a", 0x1)
-            glib.set("oh_lv1a", 0x1)
+            window.printLine(7, "Scanning... (" + str(percentage)[:5] + "%)", "Info", "center")
 
             # Get a tracking packet (with a limit)
             while (True):
-
-                # Request new data
-                isNewData = glib.get("glib_request_tracking_data")
-
-                if (isNewData == 0x1):
-                    break
+                if (glib.get("glib_request_tracking_data") == 0x1): break
+                else: glib.set("oh_lv1a", 1)
 
             packet1 = glib.get("glib_tracking_data_1")
             packet2 = glib.get("glib_tracking_data_2")
@@ -117,7 +111,7 @@ else:
     save.close()
 
     # Success
-    window.printLine(13, "Scan finished!", "Success", "center")
+    window.printLine(7, "Scan finished!", "Success", "center")
 
 # Wait before quiting
 window.waitForQuit()
