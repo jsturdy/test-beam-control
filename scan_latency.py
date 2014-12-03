@@ -98,9 +98,10 @@ for latency in range(minimumValue, maximumValue):
 
     # Efficiency variable
     hitCount = 0.
+    event = 0
 
     # Read tracking packets
-    for event in range(0, nEvents):
+    while (event < nEvents):
 
         # Percentage
         percentage = ((latency - minimumValue) * nEvents + event) / ((maximumValue - minimumValue) * nEvents * 1.) * 100.
@@ -117,13 +118,17 @@ for latency in range(minimumValue, maximumValue):
         packet4 = glib.get("glib_tracking_data_4")
         packet5 = glib.get("glib_tracking_data_5")
 
+        chipid = (0x00ff0000 & packet5) >> 16
+        if (chipid != vfat2Parameters["chipid0"]): continue
+
         data1 = ((0x0000ffff & packet5) << 16) | ((0xffff0000 & packet4) >> 16)
         data2 = ((0x0000ffff & packet4) << 16) | ((0xffff0000 & packet3) >> 16)
         data3 = ((0x0000ffff & packet3) << 16) | ((0xffff0000 & packet2) >> 16)
         data4 = ((0x0000ffff & packet2) << 16) | ((0xffff0000 & packet1) >> 16)
 
-        if (data1 + data2 + data3 + data4 != 0):
-            hitCount += 1.
+        if (data1 + data2 + data3 + data4 != 0): hitCount += 1.
+
+        event += 1
 
     hitCount /= (nEvents * 1.)
 

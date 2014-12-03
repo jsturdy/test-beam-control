@@ -55,8 +55,10 @@ else:
     glib.setVFAT2(vfat2ID, "ctrl2", 112)
     glib.setVFAT2(vfat2ID, "latency", 10)
     glib.setVFAT2(vfat2ID, "channel8", 64)
+    glib.setVFAT2(vfat2ID, "channel9", 64)
+    glib.setVFAT2(vfat2ID, "channel10", 64)
     glib.setVFAT2(vfat2ID, "vthreshold1", threshold)
-    glib.setVFAT2(vfat2ID, "vcal", 255)
+    glib.setVFAT2(vfat2ID, "vcal", 128)
 
     # Create a plot and its data
     vcalValues = []
@@ -76,9 +78,10 @@ else:
 
         # Efficiency variable
         hitCount = 0.
+        event = 0
 
         # Read tracking packets
-        for event in range(0, nEvents):
+        while (event < nEvents):
 
             # Percentage
             percentage = ((vcal - minimumValue) * nEvents + event) / ((maximumValue - minimumValue) * nEvents * 1.) * 100.
@@ -95,17 +98,17 @@ else:
             packet4 = glib.get("glib_tracking_data_4")
             packet5 = glib.get("glib_tracking_data_5")
 
-            # data1 = ((0x01000000 & packet1) >> 24)
-
-            # if (data1 != 0): hitCount += 1.
+            chipid = (0x00ff0000 & packet5) >> 16
+            if (chipid != vfat2Parameters["chipid0"]): continue
 
             data1 = ((0x0000ffff & packet5) << 16) | ((0xffff0000 & packet4) >> 16)
             data2 = ((0x0000ffff & packet4) << 16) | ((0xffff0000 & packet3) >> 16)
             data3 = ((0x0000ffff & packet3) << 16) | ((0xffff0000 & packet2) >> 16)
             data4 = ((0x0000ffff & packet2) << 16) | ((0xffff0000 & packet1) >> 16)
 
-            if (data1 + data2 + data3 + data4 != 0):
-                hitCount += 1.
+            if (data1 + data2 + data3 + data4 != 0): hitCount += 1.
+
+            event += 1
 
         hitCount /= (nEvents * 1.)
 
