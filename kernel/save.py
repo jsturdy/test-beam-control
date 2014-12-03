@@ -1,7 +1,5 @@
 import os, time
 
-testBeamDataPath = os.path.dirname(os.path.abspath(__file__)) + "/../../../test-beam-data/"
-
 class Save():
 
     f = False
@@ -11,7 +9,7 @@ class Save():
     #####################################
 
     def __init__(self, folder):
-        fileName = os.path.dirname(os.path.abspath(__file__)) + "/../../../test-beam-data/" + folder + "/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
+        fileName = os.path.dirname(os.path.abspath(__file__)) + "/../../test-beam-data/" + folder + "/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
         self.f = open(fileName, "w", 0)
         self.f.write("Time;" + time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime()) + "\n")
 
