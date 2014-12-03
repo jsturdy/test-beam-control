@@ -67,6 +67,12 @@ maximumValue = window.inputIntShifted(28, 10, "to ["+str(minimumValue)+"-255]:",
 window.printLine(-1, "You have to specify the number of measurements to take per value.", "Options")
 nEvents = window.inputInt(12, "Number of events per value [0-99999] (100):", 5, 1, 99999, 100)
 
+#########################################
+#   Scan                                #
+#########################################
+
+window.printLine(1, "Scan control", "Subtitle")
+
 # Wait before starting
 window.printLine(-1, "The scan is ready to be started. Press [s] to start.", "Options")
 window.printLine(14, "Press [s] to start the scan.", "Info", "center")
@@ -79,14 +85,10 @@ vfat2Parameters = glib.saveVFAT2(vfat2ID)
 
 # Open the save file
 save = Save("dac")
-save.writePair("VFAT2", vfat2ID)
-save.writePair("DAC", DAC)
-save.writePair("from", minimumValue)
-save.writePair("to", maximumValue)
-save.writePair("events", nEvents)
-save.writeLine("-----")
+save.writeLine("Started a DAC scan on DAC #"+str(DAC)+" of VFAT2 #"+str(vfat2ID)+" from "+str(minimumValue)+ " to "+str(maximumValue)+ " with "+str(nEvents)+" events")
+save.writeLine("--- VFAT2 #"+str(vfat2ID)" configuration ---")
 save.writeDict(vfat2Parameters)
-save.writeLine("-----")
+save.writeLine("--- Data points ---")
 
 # Change the VFAT2's parameters
 glib.setVFAT2(vfat2ID, "ctrl1", DAC)

@@ -51,6 +51,7 @@ def mainWindow(vfat2ID):
     while (True):
         # Get all the values to show
         vfat2Registers = glib.saveVFAT2(vfat2ID)
+        statusVFAT2 = [ glib.isVFAT2Running(8), glib.isVFAT2Running(9), glib.isVFAT2Running(10), glib.isVFAT2Running(11), glib.isVFAT2Running(12), glib.isVFAT2Running(13) ]
         # Check that data is present
         if (len(vfat2Registers) != 0):
             # Clear line
@@ -76,6 +77,15 @@ def mainWindow(vfat2ID):
             window.printLabel(54, 9, 24, "Calphase:", vfat2Registers["calphase"])
             window.printLabel(54, 10, 24, "Latency (10):", vfat2Registers["latency"], ("Error" if (vfat2Registers["latency"] != 10) else "Success"))
             window.printLabel(54, 11, 24, "Hit counter:", hitcounter)
+
+            window.printLine(13, "Status of the other VFAT2s", "Highlight")
+            window.printBox(0, 15, 7, ("#8 On" if statusVFAT2[0] else "#8 Off"), ("Success" if statusVFAT2[0] else "Error"))
+            window.printBox(8, 15, 7, ("#9 On" if statusVFAT2[1] else "#9 Off"), ("Success" if statusVFAT2[1] else "Error"))
+            window.printBox(16, 15, 7, ("#10 On" if statusVFAT2[2] else "#10 Off"), ("Success" if statusVFAT2[2] else "Error"))
+            window.printBox(24, 15, 7, ("#11 On" if statusVFAT2[3] else "#11 Off"), ("Success" if statusVFAT2[3] else "Error"))
+            window.printBox(32, 15, 7, ("#12 On" if statusVFAT2[4] else "#12 Off"), ("Success" if statusVFAT2[4] else "Error"))
+            window.printBox(40, 15, 7, ("#13 On" if statusVFAT2[5] else "#13 Off"), ("Success" if statusVFAT2[5] else "Error"))
+
         # Manage user input
         for i in range(0, 10000000):
             select = window.getChr()
@@ -143,8 +153,10 @@ def setRegistersWindow(vfat2ID):
     newRegisters = glib.saveVFAT2(vfat2ID)
     # Log
     save = Save("log")
-    save.writeLine("Changed VFAT2 parameters")
-    save.writePair("VFAT2", vfat2ID)
+    save.writeLine("Changed parameters of VFAT2 #"+str(vfat2ID))
+    save.writeLine("--- Old configuration ---")
+    save.writeDict(vfat2Registers)
+    save.writeLine("--- New configuration ---")
     save.writeDict(newRegisters)
     #
     window.printLine(-1, "Settings applied!", "Success")

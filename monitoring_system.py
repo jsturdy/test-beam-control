@@ -130,7 +130,10 @@ def setRegistersWindow():
     newRegisters = glib.saveSystem()
     # Log
     save = Save("log")
-    save.writeLine("Changed system parameters")
+    save.writeLine("Changed parameters of the system")
+    save.writeLine("--- Old configuration ---")
+    save.writeDict(systemRegisters)
+    save.writeLine("--- New configuration ---")
     save.writeDict(newRegisters)
     #
     window.printLine(-1, "Settings applied!", "Success")

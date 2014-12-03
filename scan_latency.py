@@ -72,13 +72,10 @@ vfat2Parameters = glib.saveVFAT2(vfat2ID)
 
 # Open the save file
 save = Save("latency")
-save.writePair("VFAT2", vfat2ID)
-save.writePair("from", minimumValue)
-save.writePair("to", maximumValue)
-save.writePair("events", nEvents)
-save.writeLine("-----")
+save.writeLine("Started a latency scan on VFAT2 #"+str(vfat2ID)+" from "+str(minimumValue)+ " to "+str(maximumValue)+ " with "+str(nEvents)+" events")
+save.writeLine("--- VFAT2 #"+str(vfat2ID)" configuration ---")
 save.writeDict(vfat2Parameters)
-save.writeLine("-----")
+save.writeLine("--- Data points ---")
 
 # Create a plot and its data
 latencyValues = []
@@ -98,7 +95,7 @@ for latency in range(minimumValue, maximumValue):
 
     # Efficiency variable
     hitCount = 0.
-    event = 0
+    event = 0.
 
     # Read tracking packets
     while (event < nEvents):
@@ -110,7 +107,6 @@ for latency in range(minimumValue, maximumValue):
         # Get a tracking packet (with a limit)
         while (True):
             if (glib.get("glib_request_tracking_data") == 0x1): break
-            # else: glib.set("oh_lv1a", 1)
 
         packet1 = glib.get("glib_tracking_data_1")
         packet2 = glib.get("glib_tracking_data_2")
@@ -118,18 +114,18 @@ for latency in range(minimumValue, maximumValue):
         packet4 = glib.get("glib_tracking_data_4")
         packet5 = glib.get("glib_tracking_data_5")
 
+        # Check Chipid
         chipid = (0x00ff0000 & packet5) >> 16
-        # if (chipid == vfat2Parameters["chipid0"]):
+        #if (chipid != vfat2Parameters["chipid0"]): continue
+        #else: event += 1
         event += 1
+
 
         data1 = ((0x0000ffff & packet5) << 16) | ((0xffff0000 & packet4) >> 16)
         data2 = ((0x0000ffff & packet4) << 16) | ((0xffff0000 & packet3) >> 16)
         data3 = ((0x0000ffff & packet3) << 16) | ((0xffff0000 & packet2) >> 16)
         data4 = ((0x0000ffff & packet2) << 16) | ((0xffff0000 & packet1) >> 16)
-
         if (data1 + data2 + data3 + data4 != 0): hitCount += 1.
-
-        event += 1
 
     hitCount /= (nEvents * 1.)
 
@@ -141,7 +137,7 @@ for latency in range(minimumValue, maximumValue):
     hitValues.append(hitCount)
 
     # Update plot
-    graph(latencyValues, hitValues, minimumValue, maximumValue, 0, 1, "Latency", "Percentage of hits")
+    graph(latencyValues, hitValues, minimumValue, maximumValue, 0, 1, "Latency", "Fraction of hits")
 
 # Reset the VFAT2 parameters
 glib.restoreVFAT2(vfat2ID, vfat2Parameters)

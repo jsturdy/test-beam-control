@@ -172,6 +172,7 @@ while (True):
         window.printLine(-1, "You have to specify a run number.", "Options")
         runNumber = window.inputInt(3, "Run number [0-99999]:", 5, 0, 99999, 0)
         # Save VFAT2's parameters
+        systemRegisters = glib.saveSystem()
         vfat2Parameters = [None] * 6
         vfat2Parameters[0] = glib.saveVFAT2(8)
         vfat2Parameters[1] = glib.saveVFAT2(9)
@@ -181,20 +182,22 @@ while (True):
         vfat2Parameters[5] = glib.saveVFAT2(13)
         # Open the save file
         save = Save("tracking")
-        save.writePair("Run number", runNumber)
-        save.writeLine("-----")
+        save.writeLine("Started run #"+str(runNumber))
+        save.writeLine("--- System configuration ---")
+        save.writeDict(systemRegisters)
+        save.writeLine("--- VFAT2 #8 configuration ---")
         save.writeDict(vfat2Parameters[0])
-        save.writeLine("-----")
+        save.writeLine("--- VFAT2 #9 configuration ---")
         save.writeDict(vfat2Parameters[1])
-        save.writeLine("-----")
+        save.writeLine("--- VFAT2 #10 configuration ---")
         save.writeDict(vfat2Parameters[2])
-        save.writeLine("-----")
+        save.writeLine("--- VFAT2 #11 configuration ---")
         save.writeDict(vfat2Parameters[3])
-        save.writeLine("-----")
+        save.writeLine("--- VFAT2 #12 configuration ---")
         save.writeDict(vfat2Parameters[4])
-        save.writeLine("-----")
+        save.writeLine("--- VFAT2 #13 configuration ---")
         save.writeDict(vfat2Parameters[5])
-        save.writeLine("-----")
+        save.writeLine("--- Events ---")
         #
         isConnected = True
     else:

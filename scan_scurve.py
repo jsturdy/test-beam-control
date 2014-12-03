@@ -41,14 +41,10 @@ else:
 
     # Open the save file
     save = Save("scurve")
-    save.writePair("VFAT2", vfat2ID)
-    save.writePair("threshold", threshold)
-    save.writePair("from", minimumValue)
-    save.writePair("to", maximumValue)
-    save.writePair("events", nEvents)
-    save.writeLine("-----")
+    save.writeLine("Started a SCurve of VFAT2 #"+str(vfat2ID)+" from "+str(minimumValue)+ " to "+str(maximumValue)+ " with "+str(nEvents)+" events and threshold "+str(threshold))
+    save.writeLine("--- VFAT2 #"+str(vfat2ID)" configuration ---")
     save.writeDict(vfat2Parameters)
-    save.writeLine("-----")
+    save.writeLine("--- Data points ---")
 
     # Common parameters
     glib.setVFAT2(vfat2ID, "ctrl0", 119)
@@ -98,9 +94,12 @@ else:
             packet4 = glib.get("glib_tracking_data_4")
             packet5 = glib.get("glib_tracking_data_5")
 
+            # Check Chipid
             chipid = (0x00ff0000 & packet5) >> 16
-            # if (chipid == vfat2Parameters["chipid0"]):
+            #if (chipid != vfat2Parameters["chipid0"]): continue
+            #else: event += 1
             event += 1
+
 
             data1 = ((0x0000ffff & packet5) << 16) | ((0xffff0000 & packet4) >> 16)
             data2 = ((0x0000ffff & packet4) << 16) | ((0xffff0000 & packet3) >> 16)
