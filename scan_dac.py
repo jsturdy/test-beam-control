@@ -86,7 +86,7 @@ vfat2Parameters = glib.saveVFAT2(vfat2ID)
 # Open the save file
 save = Save("dac")
 save.writeLine("Started a DAC scan on DAC #"+str(DAC)+" of VFAT2 #"+str(vfat2ID)+" from "+str(minimumValue)+ " to "+str(maximumValue)+ " with "+str(nEvents)+" events")
-save.writeLine("--- VFAT2 #"+str(vfat2ID)" configuration ---")
+save.writeLine("--- VFAT2 #"+str(vfat2ID)+" configuration ---")
 save.writeDict(vfat2Parameters)
 save.writeLine("--- Data points ---")
 

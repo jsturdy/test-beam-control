@@ -73,7 +73,7 @@ vfat2Parameters = glib.saveVFAT2(vfat2ID)
 # Open the save file
 save = Save("latency")
 save.writeLine("Started a latency scan on VFAT2 #"+str(vfat2ID)+" from "+str(minimumValue)+ " to "+str(maximumValue)+ " with "+str(nEvents)+" events")
-save.writeLine("--- VFAT2 #"+str(vfat2ID)" configuration ---")
+save.writeLine("--- VFAT2 #"+str(vfat2ID)+" configuration ---")
 save.writeDict(vfat2Parameters)
 save.writeLine("--- Data points ---")
 

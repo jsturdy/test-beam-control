@@ -42,7 +42,7 @@ else:
     # Open the save file
     save = Save("scurve")
     save.writeLine("Started a SCurve of VFAT2 #"+str(vfat2ID)+" from "+str(minimumValue)+ " to "+str(maximumValue)+ " with "+str(nEvents)+" events and threshold "+str(threshold))
-    save.writeLine("--- VFAT2 #"+str(vfat2ID)" configuration ---")
+    save.writeLine("--- VFAT2 #"+str(vfat2ID)+" configuration ---")
     save.writeDict(vfat2Parameters)
     save.writeLine("--- Data points ---")
 
