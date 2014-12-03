@@ -21,7 +21,7 @@ window.printLine(6, "want to scan, what the range of the scan has to be, and wha
 window.printLine(7, "of events per value has to be.")
 window.printLine(8, "You can stop the scan at any moment by pressing [Ctrl+C].")
 window.printLine(-2, "Hint: here is what to do next (possible actions are always shown here)")
-window.printLine(-1, "Press [c] to continue", "Options")
+window.printLine(-1, "Press [c] to continue.", "Options")
 window.waitForKey("c")
 
 #########################################

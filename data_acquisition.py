@@ -33,7 +33,7 @@ def introWindow():
     window.printLine(13, "The plot that appears when tacking data is the beam profile.")
     window.printLine(15, "You can always exit the program by pressing [Ctrl+C].")
     window.printLine(-2, "Hint: here is what to do next (possible actions are always shown here)")
-    window.printLine(-1, "Press [c] to continue", "Options")
+    window.printLine(-1, "Press [c] to continue.", "Options")
     # Go to non-blocking mode
     window.disableBlocking()
     #

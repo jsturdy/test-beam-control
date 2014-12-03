@@ -21,7 +21,7 @@ window.printLine(6, "The program will ask you what VFAT2 you want to scan, what 
 window.printLine(6, "of the scan has to be, and what the number of events per value has to be.")
 window.printLine(7, "You can stop the scan at any moment by pressing [Ctrl+C].")
 window.printLine(-2, "Hint: here is what to do next (possible actions are always shown here)")
-window.printLine(-1, "Press [c] to continue", "Options")
+window.printLine(-1, "Press [c] to continue.", "Options")
 window.waitForKey("c")
 
 #########################################

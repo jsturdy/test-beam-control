@@ -30,7 +30,7 @@ def introWindow():
     window.printLine(14, "As you can see, when a key performs an action, it is placed between brackets.")
     window.printLine(16, "You can always exit the program by pressing [Ctrl+C].")
     window.printLine(-2, "Hint: here is what to do next (possible actions are always shown here)")
-    window.printLine(-1, "Press [c] to continue", "Options")
+    window.printLine(-1, "Press [c] to continue.", "Options")
     window.waitForKey("c")
 
 #########################################
