@@ -125,7 +125,7 @@ def setRegistersWindow(vfat2ID):
         elif (pressedKey == ord('y')): break
     #
     if (ctrl0 != vfat2Registers["ctrl0"]): glib.setVFAT2(vfat2ID, "ctrl0", ctrl0)
-    if (ctrl1 != vfat2Registers["ctrl1"]): glib.setVFAT2(vfat2ID, "ctrl1", ctrl2)
+    if (ctrl1 != vfat2Registers["ctrl1"]): glib.setVFAT2(vfat2ID, "ctrl1", ctrl1)
     if (ctrl2 != vfat2Registers["ctrl2"]): glib.setVFAT2(vfat2ID, "ctrl2", ctrl2)
     if (ctrl3 != vfat2Registers["ctrl3"]): glib.setVFAT2(vfat2ID, "ctrl3", ctrl3)
     if (ipreampin != vfat2Registers["ipreampin"]): glib.setVFAT2(vfat2ID, "ipreampin", ipreampin)
