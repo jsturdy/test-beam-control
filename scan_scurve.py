@@ -99,7 +99,7 @@ else:
             packet5 = glib.get("glib_tracking_data_5")
 
             chipid = (0x00ff0000 & packet5) >> 16
-            if (chipid != vfat2Parameters["chipid0"]): continue
+            # if (chipid == vfat2Parameters["chipid0"]): event += 1
 
             data1 = ((0x0000ffff & packet5) << 16) | ((0xffff0000 & packet4) >> 16)
             data2 = ((0x0000ffff & packet4) << 16) | ((0xffff0000 & packet3) >> 16)
