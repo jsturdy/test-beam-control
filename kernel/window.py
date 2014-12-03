@@ -240,6 +240,8 @@ class Window():
 
     # Wait for a specific key signal
     def waitForKey(self, key):
+        #
+        self.enableBlocking()
         # Wait for key
         while (True):
             if (self.window.getch() == ord(key)): return True

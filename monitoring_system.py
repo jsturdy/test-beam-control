@@ -29,13 +29,8 @@ def introWindow():
     window.printLine(12, "As you can see, when a key performs an action, it is placed between brackets.")
     window.printLine(14, "You can always exit the program by pressing [Ctrl+C].")
     window.printLine(-2, "Hint: here is what to do next (possible actions are always shown here)")
-    window.printLine(-2, "Hint: here is what to do next (possible actions are always shown here)")
     window.printLine(-1, "Press [c] to continue", "Options")
-    # Go to non-blocking mode
-    window.disableBlocking()
-    #
-    while (True):
-        if (window.getChr() == ord('c')): return
+    window.waitForKey("c")
 
 #########################################
 #   Main window: view registers         #
@@ -154,7 +149,7 @@ def resetCountersWindow():
     window.printLine(3, "Waiting for confirmation before resetting the system's counters.", "Highlight")
     window.printLine(-1, "Reset the counters? [y]es, [n]o", "Options")
     # Go to non-blocking mode
-    window.disableBlocking()
+    window.enableBlocking()
     #
     while (True):
         pressedKey = window.getChr()

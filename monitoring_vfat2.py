@@ -31,11 +31,7 @@ def introWindow():
     window.printLine(16, "You can always exit the program by pressing [Ctrl+C].")
     window.printLine(-2, "Hint: here is what to do next (possible actions are always shown here)")
     window.printLine(-1, "Press [c] to continue", "Options")
-    # Go to non-blocking mode
-    window.disableBlocking()
-    #
-    while (True):
-        if (window.getChr() == ord('c')): return
+    window.waitForKey("c")
 
 #########################################
 #   Main window: view registers         #
