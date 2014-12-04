@@ -45,23 +45,3 @@ class Save():
         for key in dictionnary:
             self.write(str(key)+"\t"+str(dictionnary[key])+"\n")
 
-    def writeEvent(self, bc, ec, chipid, data1, data2, data3, data4, crc, bx):
-        self.writeInt(bc)
-        self.write('\t')
-        self.writeInt(ec)
-        self.write('\t')
-        self.writeInt(chipid)
-        self.write('\t')
-        self.writeInt(data1)
-        self.write('\t')
-        self.writeInt(data2)
-        self.write('\t')
-        self.writeInt(data3)
-        self.write('\t')
-        self.writeInt(data4)
-        self.write('\t')
-        self.writeInt(crc)
-        self.write('\t')
-        self.writeInt(bx)
-        self.write('\n')
-
