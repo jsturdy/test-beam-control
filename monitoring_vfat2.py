@@ -26,9 +26,10 @@ def introWindow():
     window.printLine(10, "of the screen. Once connected, here are the possible actions:")
     window.printLine(11, "Press [c] to switch to another VFAT2 on the GEB.")
     window.printLine(12, "Press [s] to change the value of the registers.")
-    window.printLine(13, "Press [q] to quit the program.")
-    window.printLine(14, "As you can see, when a key performs an action, it is placed between brackets.")
-    window.printLine(16, "You can always exit the program by pressing [Ctrl+C].")
+    window.printLine(13, "Press [d] to set the registers to their default value.")
+    window.printLine(14, "Press [q] to quit the program.")
+    window.printLine(15, "As you can see, when a key performs an action, it is placed between brackets.")
+    window.printLine(17, "You can always exit the program by pressing [Ctrl+C].")
     window.printLine(-2, "Hint: here is what to do next (possible actions are always shown here)")
     window.printLine(-1, "Press [c] to continue.", "Options")
     window.waitForKey("c")
@@ -44,7 +45,7 @@ def mainWindow(vfat2ID):
     window.printLine(1, "Monitoring VFAT2 #"+str(vfat2ID), "Subtitle")
     window.printLine(3, "Current values of the registers: values that appear in red differ from the", "Highlight")
     window.printLine(4, "recommended value for data tacking (in parentheses).", "Highlight")
-    window.printLine(-1, "Actions: [q]uit, [s]et the registers, [c]hange VFAT2", "Options")
+    window.printLine(-1, "Actions: [q]uit, [s]et the registers, [c]hange VFAT2, [d]efault values", "Options")
     # Go to non-blocking mode
     window.disableBlocking()
     # Stay in this window until command select
@@ -75,7 +76,7 @@ def mainWindow(vfat2ID):
             window.printLabel(54, 7, 24, "VThreshold 2 (0):", vfat2Registers["vthreshold2"], ("Error" if (vfat2Registers["vthreshold2"] != 0) else "Success"))
             window.printLabel(54, 8, 24, "VCal:", vfat2Registers["vcal"])
             window.printLabel(54, 9, 24, "Calphase:", vfat2Registers["calphase"])
-            window.printLabel(54, 10, 24, "Latency (13):", vfat2Registers["latency"], ("Error" if (vfat2Registers["latency"] != 10) else "Success"))
+            window.printLabel(54, 10, 24, "Latency (13):", vfat2Registers["latency"], ("Error" if (vfat2Registers["latency"] != 13) else "Success"))
             window.printLabel(54, 11, 24, "Hit counter:", hitcounter)
 
             window.printLine(13, "Status of the other VFAT2s", "Highlight")
@@ -92,6 +93,7 @@ def mainWindow(vfat2ID):
             if (select == ord('q')): return -1
             elif (select == ord('s')): return 1
             elif (select == ord('c')): return 2
+            elif (select == ord('d')): return 3
 
 #########################################
 #   Change the parameters               #
@@ -164,6 +166,56 @@ def setRegistersWindow(vfat2ID):
     time.sleep(2)
 
 #########################################
+#   Set defaults                        #
+#########################################
+
+def setDefaultsWindow(vfat2ID):
+    global glib, window
+    # Design
+    window.clear(1)
+    window.printLine(1, "Setting VFAT2 #"+str(vfat2ID)+"'s registers to their default value", "Subtitle")
+    window.printLine(3, "Waiting for confirmation before setting VFAT2 #"+str(vfat2ID)+"'s registers.", "Highlight")
+    window.printLine(-1, "Set the registers to their default value? [y]es, [n]o", "Options")
+    # Go to non-blocking mode
+    window.enableBlocking()
+    #
+    while (True):
+        pressedKey = window.getChr()
+        if (pressedKey == ord('n')): return
+        elif (pressedKey == ord('y')): break
+    #
+    vfat2Registers = glib.saveVFAT2(vfat2ID)
+    #
+    glib.setVFAT2(vfat2ID, "ctrl0", 55)
+    glib.setVFAT2(vfat2ID, "ctrl1", 0)
+    glib.setVFAT2(vfat2ID, "ctrl2", 48)
+    glib.setVFAT2(vfat2ID, "ctrl3", 0)
+    glib.setVFAT2(vfat2ID, "ipreampin", 168)
+    glib.setVFAT2(vfat2ID, "ipreampfeed", 80)
+    glib.setVFAT2(vfat2ID, "ipreampout", 150)
+    glib.setVFAT2(vfat2ID, "ishaper", 150)
+    glib.setVFAT2(vfat2ID, "ishaperfeed", 100)
+    glib.setVFAT2(vfat2ID, "icomp", 75)
+    glib.setVFAT2(vfat2ID, "vthreshold1", 15)
+    glib.setVFAT2(vfat2ID, "vthreshold2", 0)
+    glib.setVFAT2(vfat2ID, "vcal", 0)
+    glib.setVFAT2(vfat2ID, "calphase", 0)
+    glib.setVFAT2(vfat2ID, "latency", 13)
+    #
+    newRegisters = glib.saveVFAT2(vfat2ID)
+    # Log
+    save = Save("log")
+    save.writeLine("Changed parameters of VFAT2 #"+str(vfat2ID))
+    save.writeLine("--- Old configuration ---")
+    save.writeDict(vfat2Registers)
+    save.writeLine("--- New configuration ---")
+    save.writeDict(newRegisters)
+    #
+    window.printLine(-1, "Registers set!", "Success")
+    #
+    time.sleep(2)
+
+#########################################
 #   Main program                        #
 #########################################
 
@@ -196,6 +248,7 @@ while (True):
         if (nextState == -1): break
         elif (nextState == 1): setRegistersWindow(vfat2ID)
         elif (nextState == 2): isConnected = False
+        elif (nextState == 3): setDefaultsWindow(vfat2ID)
 
 # Close window
 window.close()

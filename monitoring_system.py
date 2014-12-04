@@ -25,9 +25,10 @@ def introWindow():
     window.printLine(8, "of the screen. Once connected, here are the possible actions:")
     window.printLine(9, "Press [r] to reset the counters.")
     window.printLine(10, "Press [s] to change the value of the registers.")
-    window.printLine(11, "Press [q] to quit the program.")
-    window.printLine(12, "As you can see, when a key performs an action, it is placed between brackets.")
-    window.printLine(14, "You can always exit the program by pressing [Ctrl+C].")
+    window.printLine(11, "Press [d] to set the registers to their default value.")
+    window.printLine(12, "Press [q] to quit the program.")
+    window.printLine(13, "As you can see, when a key performs an action, it is placed between brackets.")
+    window.printLine(15, "You can always exit the program by pressing [Ctrl+C].")
     window.printLine(-2, "Hint: here is what to do next (possible actions are always shown here)")
     window.printLine(-1, "Press [c] to continue.", "Options")
     window.waitForKey("c")
@@ -43,7 +44,7 @@ def mainWindow():
     window.printLine(1, "Monitoring the system", "Subtitle")
     window.printLine(3, "Current value of the registers and counters: values that appear in red", "Highlight")
     window.printLine(4, "differ from the recommended value for data tacking (in parentheses).", "Highlight")
-    window.printLine(-1, "Actions: [q]uit, [s]et the registers, [r]eset the counters", "Options")
+    window.printLine(-1, "Actions: [q]uit, [s]et the registers, [r]eset the counters, [d]efault values", "Options")
     # Go to non-blocking mode
     window.disableBlocking()
     # Stay in this window until command select
@@ -85,6 +86,7 @@ def mainWindow():
             if (select == ord('q')): return -1
             elif (select == ord('s')): return 1
             elif (select == ord('r')): return 2
+            elif (select == ord('d')): return 3
 
 #########################################
 #   Change the parameters               #
@@ -166,6 +168,48 @@ def resetCountersWindow():
     time.sleep(2)
 
 #########################################
+#   Set defaults                        #
+#########################################
+
+def setDefaultsWindow():
+    global glib, window
+    # Design
+    window.clear(1)
+    window.printLine(1, "Setting the system's registers to their default value", "Subtitle")
+    window.printLine(3, "Waiting for confirmation before setting the system's registers.", "Highlight")
+    window.printLine(-1, "Set the registers to their default value? [y]es, [n]o", "Options")
+    # Go to non-blocking mode
+    window.enableBlocking()
+    #
+    while (True):
+        pressedKey = window.getChr()
+        if (pressedKey == ord('n')): return
+        elif (pressedKey == ord('y')): break
+    #
+    systemRegisters = glib.saveSystem()
+    #
+    glib.set("oh_trigger_source", 2)
+    glib.set("oh_sbit_select", 0)
+    glib.set("glib_sbit_select", 0)
+    glib.set("oh_vfat2_src_select", 1)
+    glib.set("oh_cdce_src_select", 1)
+    glib.set("oh_vfat2_fallback", 0)
+    glib.set("oh_cdce_fallback", 0)
+    #
+    newRegisters = glib.saveSystem()
+    # Log
+    save = Save("log")
+    save.writeLine("Changed parameters of the system")
+    save.writeLine("--- Old configuration ---")
+    save.writeDict(systemRegisters)
+    save.writeLine("--- New configuration ---")
+    save.writeDict(newRegisters)
+    #
+    window.printLine(-1, "Registers set!", "Success")
+    #
+    time.sleep(2)
+
+#########################################
 #   Main program                        #
 #########################################
 introWindow()
@@ -175,6 +219,7 @@ while (True):
     if (nextState == -1): break
     elif (nextState == 1): setRegistersWindow()
     elif (nextState == 2): resetCountersWindow()
+    elif (nextState == 3): setDefaultsWindow()
 
 # Close window
 window.close()
