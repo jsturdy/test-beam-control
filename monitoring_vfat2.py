@@ -75,7 +75,7 @@ def mainWindow(vfat2ID):
             window.printLabel(54, 7, 24, "VThreshold 2 (0):", vfat2Registers["vthreshold2"], ("Error" if (vfat2Registers["vthreshold2"] != 0) else "Success"))
             window.printLabel(54, 8, 24, "VCal:", vfat2Registers["vcal"])
             window.printLabel(54, 9, 24, "Calphase:", vfat2Registers["calphase"])
-            window.printLabel(54, 10, 24, "Latency (10):", vfat2Registers["latency"], ("Error" if (vfat2Registers["latency"] != 10) else "Success"))
+            window.printLabel(54, 10, 24, "Latency (13):", vfat2Registers["latency"], ("Error" if (vfat2Registers["latency"] != 10) else "Success"))
             window.printLabel(54, 11, 24, "Hit counter:", hitcounter)
 
             window.printLine(13, "Status of the other VFAT2s", "Highlight")
