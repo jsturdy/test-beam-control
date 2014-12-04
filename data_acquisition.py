@@ -129,13 +129,13 @@ def getDataWindow():
         crc = str(0x0000ffff & packet1)
         bx = str(packet7)
         # Save data
-        save.writeInt(packet7)
         save.writeInt(packet6)
         save.writeInt(packet5)
         save.writeInt(packet4)
         save.writeInt(packet3)
         save.writeInt(packet2)
         save.writeInt(packet1)
+        save.writeInt(packet7)
         save.write('\n')
         # Show histogram
         for i in range(0, 31):
