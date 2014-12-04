@@ -119,37 +119,40 @@ def getDataWindow():
         packet6 = glib.get("glib_tracking_data_6")
         packet7 = glib.get("glib_tracking_data_7")
         # Format data
-        bc = str((0x0fff0000 & packet6) >> 16)
-        ec = str((0x00000ff0 & packet6) >> 4)
-        chipid = str((0x0fff0000 & packet5) >> 16)
-        data1 = bin(((0x0000ffff & packet5) << 16) | ((0xffff0000 & packet4) >> 16))[2:].zfill(32)
-        data2 = bin(((0x0000ffff & packet4) << 16) | ((0xffff0000 & packet3) >> 16))[2:].zfill(32)
-        data3 = bin(((0x0000ffff & packet3) << 16) | ((0xffff0000 & packet2) >> 16))[2:].zfill(32)
-        data4 = bin(((0x0000ffff & packet2) << 16) | ((0xffff0000 & packet1) >> 16))[2:].zfill(32)
-        crc = str(0x0000ffff & packet1)
-        bx = str(packet7)
+        bc = (0x0fff0000 & packet6) >> 16
+        ec = (0x00000ff0 & packet6) >> 4
+        chipid = (0x0fff0000 & packet5) >> 16
+        data1 = ((0x0000ffff & packet5) << 16) | ((0xffff0000 & packet4) >> 16)
+        data2 = ((0x0000ffff & packet4) << 16) | ((0xffff0000 & packet3) >> 16)
+        data3 = ((0x0000ffff & packet3) << 16) | ((0xffff0000 & packet2) >> 16)
+        data4 = ((0x0000ffff & packet2) << 16) | ((0xffff0000 & packet1) >> 16)
+        crc = 0x0000ffff & packet1
+        bx = packet7
+        data1b = bin(data1)[2:].zfill(32)
+        data2b = bin(data2)[2:].zfill(32)
+        data3b = bin(data3)[2:].zfill(32)
+        data4b = bin(data4)[2:].zfill(32)
         # Save data
-        event = bc + ";" + ec + ";" + chipid + ";" + data1 + data2 + data3 + data4 + ";" + crc + ";" + bx
-        save.writeLine(event)
+        save.writeEvent(bc, ec, chipid, data1, data2, data3, data4, crc, bx)
         # Show histogram
         for i in range(0, 31):
-            strips[i] += (1 if (data1[i] == '1') else 0)
-            strips[i + 32] += (1 if (data2[i] == '1') else 0)
-            strips[i + 64] += (1 if (data3[i] == '1') else 0)
-            strips[i + 96] += (1 if (data4[i] == '1') else 0)
+            strips[i] += (1 if (data1b[i] == '1') else 0)
+            strips[i + 32] += (1 if (data2b[i] == '1') else 0)
+            strips[i + 64] += (1 if (data3b[i] == '1') else 0)
+            strips[i + 96] += (1 if (data4b[i] == '1') else 0)
         #
         graph1D(strips, 0, 127)
         # Data
         window.printLine(5, "Information about the last event:")
-        window.printLabel(0, 6, 40, "BC:", bc)
-        window.printLabel(0, 7, 40, "EC:", ec)
-        window.printLabel(0, 8, 40, "ChipID:", chipid)
-        window.printLabel(0, 9, 40, "Data 1:", data1)
-        window.printLabel(0, 10, 40, "Data 2:", data2)
-        window.printLabel(0, 11, 40, "Data 3:", data3)
-        window.printLabel(0, 12, 40, "Data 4:", data4)
-        window.printLabel(0, 13, 40, "CRC:", crc)
-        window.printLabel(0, 14, 40, "BX:", bx)
+        window.printLabel(0, 6, 40, "BC:", str(bc))
+        window.printLabel(0, 7, 40, "EC:", str(ec))
+        window.printLabel(0, 8, 40, "ChipID:", str(chipid))
+        window.printLabel(0, 9, 40, "Data 1:", data1b)
+        window.printLabel(0, 10, 40, "Data 2:", data2b)
+        window.printLabel(0, 11, 40, "Data 3:", data3b)
+        window.printLabel(0, 12, 40, "Data 4:", data4b)
+        window.printLabel(0, 13, 40, "CRC:", str(crc))
+        window.printLabel(0, 14, 40, "BX:", str(bx))
         #
         nEvents += 1
 
@@ -198,6 +201,7 @@ while (True):
         save.writeLine("--- VFAT2 #13 configuration ---")
         save.writeDict(vfat2Parameters[5])
         save.writeLine("--- Events ---")
+        save.switchToBinary()
         #
         isConnected = True
     else:
