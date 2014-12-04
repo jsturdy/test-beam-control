@@ -32,7 +32,7 @@ class Save():
         self.f.write(str(string) + "\n")
 
     def writeInt(self, i):
-        self.f.write(struct.pack("I", i))
+        self.f.write(struct.pack(">I", i))
 
     #####################################
     #   Helpers                         #
