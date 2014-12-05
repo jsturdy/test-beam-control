@@ -76,7 +76,7 @@ def mainWindow(vfat2ID):
             window.printLabel(54, 7, 24, "VThreshold 2 (0):", vfat2Registers["vthreshold2"], ("Error" if (vfat2Registers["vthreshold2"] != 0) else "Success"))
             window.printLabel(54, 8, 24, "VCal:", vfat2Registers["vcal"])
             window.printLabel(54, 9, 24, "Calphase:", vfat2Registers["calphase"])
-            window.printLabel(54, 10, 24, "Latency (13):", vfat2Registers["latency"], ("Error" if (vfat2Registers["latency"] != 13) else "Success"))
+            window.printLabel(54, 10, 24, "Latency (20):", vfat2Registers["latency"], ("Error" if (vfat2Registers["latency"] != 20) else "Success"))
             window.printLabel(54, 11, 24, "Hit counter:", hitcounter)
 
             window.printLine(13, "Status of the other VFAT2s", "Highlight")
@@ -127,7 +127,7 @@ def setRegistersWindow(vfat2ID):
     vthreshold2 = window.inputIntShifted(40, 8, "VThreshold 2 (0) [0-255]:", 3, 0, 255, vfat2Registers["vthreshold2"])
     vcal = window.inputIntShifted(40, 10, "VCal [0-255]:", 3, 0, 255, vfat2Registers["vcal"])
     calphase = window.inputIntShifted(40, 11, "Calphase [0-255]:", 3, 0, 255, vfat2Registers["calphase"])
-    latency = window.inputIntShifted(40, 13, "Latency (10) [0-255]:", 3, 0, 255, vfat2Registers["latency"])
+    latency = window.inputIntShifted(40, 13, "Latency (20) [0-255]:", 3, 0, 255, vfat2Registers["latency"])
     #
     window.printLine(-1, "Apply the changes? [y]es, [n]o", "Options")
     #
@@ -200,7 +200,7 @@ def setDefaultsWindow(vfat2ID):
     glib.setVFAT2(vfat2ID, "vthreshold2", 0)
     glib.setVFAT2(vfat2ID, "vcal", 0)
     glib.setVFAT2(vfat2ID, "calphase", 0)
-    glib.setVFAT2(vfat2ID, "latency", 13)
+    glib.setVFAT2(vfat2ID, "latency", 20)
     #
     newRegisters = glib.saveVFAT2(vfat2ID)
     # Log
