@@ -41,7 +41,7 @@ while (True):
     glib.setVFAT2(12, "ishaper", 150)
     glib.setVFAT2(12, "ishaperfeed", 100)
     glib.setVFAT2(12, "icomp", 75)
-    glib.setVFAT2(12, "vthreshold1", 15)
+    glib.setVFAT2(12, "vthreshold1", 30)
     glib.setVFAT2(12, "vthreshold2", 0)
     glib.setVFAT2(12, "vcal", 0)
     glib.setVFAT2(12, "calphase", 0)
