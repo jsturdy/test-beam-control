@@ -1,5 +1,6 @@
 # System imports
 import time
+from math import sqrt
 from kernel import *
 
 # Create window
@@ -89,6 +90,7 @@ save.writeLine("Started a DAC scan on DAC #"+str(DAC)+" of VFAT2 #"+str(vfat2ID)
 save.writeLine("--- VFAT2 #"+str(vfat2ID)+" configuration ---")
 save.writeDict(vfat2Parameters)
 save.writeLine("--- Data points ---")
+save.writeLine("In\t<x>\tsig(<x>)")
 
 # Change the VFAT2's parameters
 glib.setVFAT2(vfat2ID, "ctrl1", DAC)
@@ -126,7 +128,10 @@ for dacValue in range(minimumValue, maximumValue):
     glib.set("oh_resync", 0x1)
 
     # Average ADC value
+    sumADC = 0
+    sumADC2 = 0
     averageADC = 0
+    averageADC2 = 0
 
     # Get N ADC
     for event in range(0, nEvents):
@@ -137,13 +142,21 @@ for dacValue in range(minimumValue, maximumValue):
 
         time.sleep(0.25)
 
-        if (DAC <= 6): averageADC += glib.get("oh_adc_i")
-        else: averageADC += glib.get("oh_adc_v")
+        if (DAC <= 6):
+            valueADC = glib.get("oh_adc_i")
+            sumADC += valueADC
+            sumADC2 += valueADC * valueADC
+        else:
+            valueADC = glib.get("oh_adc_v")
+            sumADC += valueADC
+            sumADC2 += valueADC * valueADC
 
-    averageADC /= (nEvents * 1.)
+    averageADC = sumADC / (nEvents * 1.)
+    averageADC2 = sumADC2 / (nEvents * 1.)
 
     # Save the points
-    save.writePair(dacValue, averageADC)
+    #save.writePair(dacValue, averageADC)
+    save.writeList([dacValue, averageADC, sqrt(averageADC2 - averageADC * averageADC) / sqrt(nEvents)])
 
     # Add data
     dacValues.append(dacValue)

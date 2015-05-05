@@ -101,7 +101,7 @@ else:
             event += 1
 
 
-            data1 = ((0x0000ffff & packet5) << 16) | ((0xffff0000 & packet4) >> 16)
+            data1 = ((0x00007fff & packet5) << 16) | ((0xffff0000 & packet4) >> 16)
             data2 = ((0x0000ffff & packet4) << 16) | ((0xffff0000 & packet3) >> 16)
             data3 = ((0x0000ffff & packet3) << 16) | ((0xffff0000 & packet2) >> 16)
             data4 = ((0x0000ffff & packet2) << 16) | ((0xffff0000 & packet1) >> 16)

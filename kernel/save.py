@@ -41,7 +41,13 @@ class Save():
     def writePair(self, x, y):
         self.f.write(str(x)+"\t"+str(y)+"\n")
 
+    def writeList(self, l):
+        listValuesStr = ""
+        for value in l:
+            listValuesStr += str(value) + "\t"
+
+        self.f.write(listValuesStr[:-1] + "\n")
+
     def writeDict(self, dictionnary):
         for key in dictionnary:
             self.write(str(key)+"\t"+str(dictionnary[key])+"\n")
-
