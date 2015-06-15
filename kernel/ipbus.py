@@ -44,7 +44,7 @@ class GLIB:
 
     # Read operation
     def get(self, register, ignoreError = False):
-        for i in range(0, 8):
+        for i in range(0, 2):
             try:
                 controlChar = self.ipbus.read(register)
                 return controlChar
@@ -55,8 +55,8 @@ class GLIB:
         return False
 
     # Write operation
-    def set(self, register, value, ignoreError = False):
-        for i in range(0,8):
+    def set(self, register, value, ignoreError = False): 
+        for i in range(0, 2):
             try:
                 self.ipbus.write(register, value)
                 return True
