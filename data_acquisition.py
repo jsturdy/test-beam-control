@@ -81,7 +81,9 @@ def emptyBuffersWindow():
         if (pressedKey == ord('n')): return
         elif (pressedKey == ord('y')): break
     #
-    glib.set("glib_empty_tracking_data", 1)
+    glib.set("glib_empty_tracking_data_0", 1)
+    glib.set("glib_empty_tracking_data_1", 1)
+    glib.set("glib_empty_tracking_data_2", 1)
     #
     window.printLine(-1, "Buffers emptied!", "Success")
     #
@@ -105,19 +107,41 @@ def getDataWindow():
     while (True):
         window.printLine(3, str(nEvents) + " events saved during this acquisition!", "Info")
 
+        packet1 = packet2 = packet3 = packet4 = packet5 = packet6 = packet7 = 0
+
         # Get a tracking packet (with a limit)
         while (True):
-            if (glib.get("glib_request_tracking_data") == 0x1): break
+            if (glib.get("glib_track_0_req") == 0x1): 
+                packet1 = glib.get("glib_track_0_d1")
+                packet2 = glib.get("glib_track_0_d2")
+                packet3 = glib.get("glib_track_0_d3")
+                packet4 = glib.get("glib_track_0_d4")
+                packet5 = glib.get("glib_track_0_d5")
+                packet6 = glib.get("glib_track_0_d6")
+                packet7 = glib.get("glib_track_0_d7")
+                break
+            # if (glib.get("glib_track_1_req") == 0x1): 
+            #     packet1 = glib.get("glib_track_1_d1")
+            #     packet2 = glib.get("glib_track_1_d2")
+            #     packet3 = glib.get("glib_track_1_d3")
+            #     packet4 = glib.get("glib_track_1_d4")
+            #     packet5 = glib.get("glib_track_1_d5")
+            #     packet6 = glib.get("glib_track_1_d6")
+            #     packet7 = glib.get("glib_track_1_d7")
+            #     break
+            if (glib.get("glib_track_2_req") == 0x1): 
+                packet1 = glib.get("glib_track_2_d1")
+                packet2 = glib.get("glib_track_2_d2")
+                packet3 = glib.get("glib_track_2_d3")
+                packet4 = glib.get("glib_track_2_d4")
+                packet5 = glib.get("glib_track_2_d5")
+                packet6 = glib.get("glib_track_2_d6")
+                packet7 = glib.get("glib_track_2_d7")
+                break
             for i in range(0, 100):
-                if (window.getChr() == ord('t')): return
+               if (window.getChr() == ord('t')): return
         #
-        packet1 = glib.get("glib_tracking_data_1")
-        packet2 = glib.get("glib_tracking_data_2")
-        packet3 = glib.get("glib_tracking_data_3")
-        packet4 = glib.get("glib_tracking_data_4")
-        packet5 = glib.get("glib_tracking_data_5")
-        packet6 = glib.get("glib_tracking_data_6")
-        packet7 = glib.get("glib_tracking_data_7")
+
         # Format data
         bc = str((0x0fff0000 & packet6) >> 16)
         ec = str((0x00000ff0 & packet6) >> 4)

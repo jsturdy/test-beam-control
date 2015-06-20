@@ -51,10 +51,10 @@ else:
     glib.setVFAT2(vfat2ID, "ctrl2", 112)
     glib.setVFAT2(vfat2ID, "latency", 10)
     glib.setVFAT2(vfat2ID, "channel8", 64)
-    glib.setVFAT2(vfat2ID, "channel9", 64)
-    glib.setVFAT2(vfat2ID, "channel10", 64)
+    # glib.setVFAT2(vfat2ID, "channel9", 64)
+    # glib.setVFAT2(vfat2ID, "channel10", 64)
     glib.setVFAT2(vfat2ID, "vthreshold1", threshold)
-    glib.setVFAT2(vfat2ID, "vcal", 128)
+    glib.setVFAT2(vfat2ID, "vcal", 255)
 
     # Create a plot and its data
     vcalValues = []
@@ -86,7 +86,7 @@ else:
             # Get a tracking packet (with a limit)
             while (True):
                 if (glib.get("glib_request_tracking_data") == 0x1): break
-                else: glib.set("oh_lv1a_and_calpulse", 10)
+                else: glib.set("oh_lv1a_and_calpulse", 40)
 
             packet1 = glib.get("glib_tracking_data_1")
             packet2 = glib.get("glib_tracking_data_2")
@@ -125,6 +125,8 @@ else:
     # Reset the VFAT2 parameters
     glib.restoreVFAT2(vfat2ID, vfat2Parameters)
     glib.setVFAT2(vfat2ID, "channel8", 0)
+    glib.setVFAT2(vfat2ID, "channel9", 0)
+    glib.setVFAT2(vfat2ID, "channel10", 0)
 
     # Close the save file
     save.close()

@@ -52,7 +52,15 @@ def mainWindow(vfat2ID):
     while (True):
         # Get all the values to show
         vfat2Registers = glib.saveVFAT2(vfat2ID)
-        statusVFAT2 = [ glib.isVFAT2Running(8), glib.isVFAT2Running(9), glib.isVFAT2Running(10), glib.isVFAT2Running(11), glib.isVFAT2Running(12), glib.isVFAT2Running(13) ]
+
+        statusVFAT2 = [0 for x in range(24)]
+
+        for i in range(0, 24):
+            if (glib.isVFAT2Present(i)):
+                statusVFAT2[i] = 2 if glib.isVFAT2Running(i) else 1
+            else:
+                statusVFAT2[i] = 0
+
         # Check that data is present
         if (len(vfat2Registers) != 0):
             # Clear line
@@ -80,12 +88,14 @@ def mainWindow(vfat2ID):
             window.printLabel(54, 11, 24, "Hit counter:", hitcounter)
 
             window.printLine(13, "Status of the other VFAT2s", "Highlight")
-            window.printBox(0, 15, 7, ("#8 On" if statusVFAT2[0] else "#8 Off"), ("Success" if statusVFAT2[0] else "Error"))
-            window.printBox(8, 15, 7, ("#9 On" if statusVFAT2[1] else "#9 Off"), ("Success" if statusVFAT2[1] else "Error"))
-            window.printBox(16, 15, 7, ("#10 On" if statusVFAT2[2] else "#10 Off"), ("Success" if statusVFAT2[2] else "Error"))
-            window.printBox(24, 15, 7, ("#11 On" if statusVFAT2[3] else "#11 Off"), ("Success" if statusVFAT2[3] else "Error"))
-            window.printBox(32, 15, 7, ("#12 On" if statusVFAT2[4] else "#12 Off"), ("Success" if statusVFAT2[4] else "Error"))
-            window.printBox(40, 15, 7, ("#13 On" if statusVFAT2[5] else "#13 Off"), ("Success" if statusVFAT2[5] else "Error"))
+
+            for i in range(0, 24):
+                if (statusVFAT2[i] == 2):
+                    window.printBox((i % 8) * 8, (15 + i / 8), 7, "#"+str(i)+" On", "Success")
+                elif (statusVFAT2[i] == 1):
+                    window.printBox((i % 8) * 8, (15 + i / 8), 7, "#"+str(i)+" Off", "Warning")
+                else:
+                    window.printBox((i % 8) * 8, (15 + i / 8), 7, "#"+str(i)+" XXX", "Error")
 
         # Manage user input
         for i in range(0, 10000000):
@@ -232,7 +242,7 @@ while (True):
         # Select the VFAT2
         window.printLine(1, "VFAT2 selection", "Subtitle")
         window.printLine(-1, "You have to specify which VFAT2 you want to monitor.", "Options")
-        vfat2ID = window.inputInt(3, "Select the VFAT2 to monitor [8-13]:", 2, 8, 13, 8)
+        vfat2ID = window.inputInt(3, "Select the VFAT2 to monitor [0-23]:", 2, 0, 23, 0)
         # Test if VFAT2 is present
         if (glib.isVFAT2Present(vfat2ID) == False):
             # Clear line
