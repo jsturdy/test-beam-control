@@ -10,7 +10,13 @@ class Save():
     #####################################
 
     def __init__(self, folder):
-        self.path = os.path.dirname(os.path.abspath(__file__)) + "/../../test-beam-data/" + folder + "/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
+        #self.path = os.path.dirname(os.path.abspath(__file__)) + "/opt/gemdaq/test-beam-data/" + folder + "/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
+        self.path = "/opt/gemdaq/test-beam-data/" + folder + "/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
+        #moved back to test-beam-data###make the directory
+        #moved back to test-beam-data#directory = "/tmp/" +folder
+        #moved back to test-beam-data#if not os.path.exists(directory):
+        #moved back to test-beam-data#    os.makedirs(directory)
+        #moved back to test-beam-data#self.path = "/tmp/" +folder + "/" + time.strftime("%Y_%m_%d_%H_%M_%S", time.gmtime()) + ".txt"
         self.f = open(self.path, "w", 0)
         self.f.write("Time\t" + time.strftime("%Y/%m/%d %H:%M:%S", time.gmtime()) + "\n")
 
