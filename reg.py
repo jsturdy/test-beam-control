@@ -1,6 +1,26 @@
 from kernel import *
 
-glib = GLIB()
+import uhal
+
+#from optparse import OptionParser
+#parser = OptionParser()
+#parser.add_option("-s", "--slot", type="int", dest="slot",
+#		  help="slot in uTCA crate", metavar="slot", default=4)
+#
+#parser.add_option("-o", "--links", type="string", dest="activeLinks", action='append',
+#		  help="pair of connected optical links (GLIB,OH)", metavar="activeLinks", default=[])
+#(options, args) = parser.parse_args()
+#
+#links = {}
+#for link in options.activeLinks:
+#	pair = map(int, link.split(","))
+#	links[pair[0]] = pair[1]
+#print "links", links
+#
+uhal.setLogLevelTo( uhal.LogLevel.FATAL )
+
+glib = GLIB(4,{1:1})
+#glib = GLIB()
 
 if (sys.argv[1] == 'w' and len(sys.argv) == 4):
     print "Write to ", sys.argv[2]
