@@ -66,6 +66,7 @@ class GLIB:
         if not self.glib.getNode(register):
             self.throwError("Could not find %s in address table"%(register), ignoreError)
             return False
+        print "%s address 0x%x"%(register, self.glib.getNode(register).getAddress())
         for i in range(0, 5):
             try:
                 controlChar = self.glib.getNode(register).read()
