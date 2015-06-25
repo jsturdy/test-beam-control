@@ -23,7 +23,7 @@ class GLIB:
 
     # Create uHAL device
     def __init__(self, slot, links):
-        self.slot = slot
+        self.slot = 160+slot
         self.links = links
         self.oh_control_link   = links[links.keys()[0]]
         self.glib_control_link = links.keys()[0]
@@ -66,13 +66,15 @@ class GLIB:
         if not self.glib.getNode(register):
             self.throwError("Could not find %s in address table"%(register), ignoreError)
             return False
-        print "%s address 0x%x"%(register, self.glib.getNode(register).getAddress())
+        address = self.glib.getNode(register).getAddress()
         for i in range(0, 5):
+            print "read trial %d on register %s (0x%x)"%(i,register,address)
             try:
                 controlChar = self.glib.getNode(register).read()
                 self.glib.dispatch()
                 return controlChar
             except uhal.exception, e:
+                print e
                 time.sleep(0.1)
                 pass
         self.throwError("Could not read " + register, ignoreError)
