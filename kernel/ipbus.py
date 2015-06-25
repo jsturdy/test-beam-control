@@ -68,13 +68,13 @@ class GLIB:
             return False
         address = self.glib.getNode(register).getAddress()
         for i in range(0, 5):
-            print "read trial %d on register %s (0x%x)"%(i,register,address)
+            #print "read trial %d on register %s (0x%x)"%(i,register,address)
             try:
                 controlChar = self.glib.getNode(register).read()
                 self.glib.dispatch()
                 return controlChar
             except uhal.exception, e:
-                print e
+                #print e
                 time.sleep(0.1)
                 pass
         self.throwError("Could not read " + register, ignoreError)
@@ -105,7 +105,7 @@ class GLIB:
         value = self.get("%s.%s"%(self.glib_base,register), ignoreError)
         if (value == False): return False
         elif (((value & 0x4000000) >> 26) == 1):
-            self.throwError("GLIB not found!", ignoreError)
+            self.throwError("GLIB register %s not found!"%(register), ignoreError)
             return False
         else: return (value & 0xff)
 
@@ -122,7 +122,7 @@ class GLIB:
         value = self.get("%s.%s"%(self.oh_base,register), ignoreError)
         if (value == False): return False
         elif (((value & 0x4000000) >> 26) == 1):
-            self.throwError("OH not found!", ignoreError)
+            self.throwError("OH register %s not found!"%(register), ignoreError)
             return False
         else: return (value & 0xff)
 
@@ -139,7 +139,7 @@ class GLIB:
         value = self.get("%s.VFAT%d.%s"%(self.vfat_base,num,register), ignoreError)
         if (value == False): return False
         elif (((value & 0x4000000) >> 26) == 1):
-            self.throwError("VFAT2 not found!", ignoreError)
+            self.throwError("VFAT2 register %s not found!"%(register), ignoreError)
             return False
         else: return (value & 0xff)
 
@@ -152,6 +152,7 @@ class GLIB:
         # Test read
         chipId = self.get("%s.VFAT%d.ChipID0"%(self.vfat_base,num), True)
         #
+        self.throwError("VFAT2 chip%d returns chipid0 0x%08x"%(num,chipId), False)
         if (chipId == False): return False
         elif (((chipId & 0x4000000) >> 26) == 1): return False
         else: return True
@@ -161,6 +162,7 @@ class GLIB:
         # Test read
         ctrl0 = self.get("%s.VFAT%d.ContReg0"%(self.vfat_base,num), True)
         #
+        self.throwError("VFAT2 chip%d returns ctrl0 0x%08x"%(num,ctrl0), False)
         if (ctrl0 == False): return False
         elif (((ctrl0 & 0x4000000) >> 26) == 1): return False
         elif ((ctrl0 & 0x1) == 0x1): return True
@@ -256,37 +258,38 @@ class GLIB:
 
         data["oh_ext_lv1a_counter"]     = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.L1A.External"%(self.oh_control_link)    )
         data["oh_int_lv1a_counter"]     = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.L1A.Internal"%(self.oh_control_link)    )
-        data["oh_del_lv1a_counter"]     = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.L1A.Delayed"%(self.oh_control_link)    )
-        data["oh_lv1a_counter"]         = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.L1A.Total"%(self.oh_control_link)        )
+        data["oh_del_lv1a_counter"]     = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.L1A.Delayed"%( self.oh_control_link)    )
+        data["oh_lv1a_counter"]         = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.L1A.Total"%(   self.oh_control_link)    )
         data["oh_int_calpulse_counter"] = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.CalPulse.Internal"%(self.oh_control_link))
-        data["oh_del_calpulse_counter"] = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.CalPulse.Delayed"%(self.oh_control_link))
-        data["oh_calpulse_counter"]     = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.CalPulse.Total"%(self.oh_control_link)    )
-        data["oh_resync_counter"]       = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.Resync"%(self.oh_control_link)      )
-        data["oh_bc0_counter"]          = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.BC0"%(self.oh_control_link)         )
+        data["oh_del_calpulse_counter"] = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.CalPulse.Delayed"%( self.oh_control_link))
+        data["oh_calpulse_counter"]     = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.CalPulse.Total"%(   self.oh_control_link))
+        data["oh_resync_counter"]       = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.Resync"%( self.oh_control_link)      )
+        data["oh_bc0_counter"]          = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.BC0"%(    self.oh_control_link)      )
+        data["oh_bx_counter"]           = self.getOH("OptoHybrid_LINKS.LINK%d.COUNTERS.BXCount"%(self.oh_control_link)      )
         return data
 
     # Reset the counters
     def resetCounters(self):
         for link in self.links.keys():
-            self.setGLIB("GLIB_LINKS.LINK%d.OPTICAL_LINKS.Resets.LinkErr"%(link)        ,0x0)
-            self.setGLIB("GLIB_LINKS.LINK%d.OPTICAL_LINKS.Resets.RecI2CRequests"%(link) ,0x0)
-            self.setGLIB("GLIB_LINKS.LINK%d.OPTICAL_LINKS.Resets.SntI2CRequests"%(link) ,0x0)
-            self.setGLIB("GLIB_LINKS.LINK%d.OPTICAL_LINKS.Resets.RecRegRequests"%(link) ,0x0)
-            self.setGLIB("GLIB_LINKS.LINK%d.OPTICAL_LINKS.Resets.SntRegRequests"%(link) ,0x0)
+            self.setGLIB("GLIB_LINKS.LINK%d.OPTICAL_LINKS.Resets.LinkErr"%(       link),0x0)
+            self.setGLIB("GLIB_LINKS.LINK%d.OPTICAL_LINKS.Resets.RecI2CRequests"%(link),0x0)
+            self.setGLIB("GLIB_LINKS.LINK%d.OPTICAL_LINKS.Resets.SntI2CRequests"%(link),0x0)
+            self.setGLIB("GLIB_LINKS.LINK%d.OPTICAL_LINKS.Resets.RecRegRequests"%(link),0x0)
+            self.setGLIB("GLIB_LINKS.LINK%d.OPTICAL_LINKS.Resets.SntRegRequests"%(link),0x0)
             
-            self.setOH("OptoHybrid_LINKS.LINK%d.OPTICAL_LINKS.Resets.LinkErr"%(self.links[link]),0x0       )
-            self.setOH("OptoHybrid_LINKS.LINK%d.OPTICAL_LINKS.Resets.RecI2CRequests"%(self.links[link]),0x0    )
-            self.setOH("OptoHybrid_LINKS.LINK%d.OPTICAL_LINKS.Resets.SntI2CRequests"%(self.links[link]),0x0    )
-            self.setOH("OptoHybrid_LINKS.LINK%d.OPTICAL_LINKS.Resets.RecRegRequests"%(self.links[link]),0x0      )
-            self.setOH("OptoHybrid_LINKS.LINK%d.OPTICAL_LINKS.Resets.SntRegRequests"%(self.links[link]),0x0      )
+            self.setOH("OptoHybrid_LINKS.LINK%d.OPTICAL_LINKS.Resets.LinkErr"%(       self.links[link]),0x0)
+            self.setOH("OptoHybrid_LINKS.LINK%d.OPTICAL_LINKS.Resets.RecI2CRequests"%(self.links[link]),0x0)
+            self.setOH("OptoHybrid_LINKS.LINK%d.OPTICAL_LINKS.Resets.SntI2CRequests"%(self.links[link]),0x0)
+            self.setOH("OptoHybrid_LINKS.LINK%d.OPTICAL_LINKS.Resets.RecRegRequests"%(self.links[link]),0x0)
+            self.setOH("OptoHybrid_LINKS.LINK%d.OPTICAL_LINKS.Resets.SntRegRequests"%(self.links[link]),0x0)
             
-            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.L1A.External"%(self.links[link]),0x0    )
-            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.L1A.Internal"%(self.links[link]),0x0    )
-            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.L1A.Delayed"%(self.links[link]),0x0    )
-            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.L1A.Total"%(self.links[link]),0x0        )
+            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.L1A.External"%(self.links[link]),0x0)
+            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.L1A.Internal"%(self.links[link]),0x0)
+            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.L1A.Delayed"%( self.links[link]),0x0)
+            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.L1A.Total"%(   self.links[link]),0x0)
             self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.CalPulse.Internal"%(self.links[link]),0x0)
-            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.CalPulse.Delayed"%(self.links[link]),0x0)
-            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.CalPulse.Total"%(self.links[link]),0x0    )
-            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.Resync"%(self.links[link]),0x0      )
-            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.BC0"%(self.links[link]),0x0         )
+            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.CalPulse.Delayed"%( self.links[link]),0x0)
+            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.CalPulse.Total"%(   self.links[link]),0x0)
+            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.Resync"%(self.links[link]),0x0)
+            self.setOH("OptoHybrid_LINKS.LINK%d.COUNTERS.RESETS.BC0"%(   self.links[link]),0x0)
   

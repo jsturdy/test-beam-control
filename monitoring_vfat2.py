@@ -79,6 +79,16 @@ def mainWindow(vfat2ID):
         statusVFAT2 = [0 for x in range(24)]
 
         for i in range(0, 24):
+	    if (0 not in links.keys()):
+		if (i < 8):
+                    continue
+	    if (1 not in links.keys()):
+		if ((i > 7) and (i < 16)):
+                    continue
+	    if (2 not in links.keys()):
+		if (i > 15):
+                    continue
+	    # now only chips we could reasonably talk to
             if (glib.isVFAT2Present(i)):
                 statusVFAT2[i] = 2 if glib.isVFAT2Running(i) else 1
             else:
@@ -92,11 +102,11 @@ def mainWindow(vfat2ID):
             hitcounter = (vfat2Registers["hitcount2"] << 16) | (vfat2Registers["hitcount1"] << 8) | vfat2Registers["hitcount0"]
             #
             window.printLabel(0, 6, 24, "Control 0 (55):", vfat2Registers["ctrl0"], ("Error" if (vfat2Registers["ctrl0"] != 55) else "Success"))
-            window.printLabel(0, 7, 24, "Control 1 (0):", vfat2Registers["ctrl1"], ("Error" if (vfat2Registers["ctrl1"] != 0) else "Success"))
+            window.printLabel(0, 7, 24, "Control 1 (0) :", vfat2Registers["ctrl1"], ("Error" if (vfat2Registers["ctrl1"] != 0) else "Success"))
             window.printLabel(0, 8, 24, "Control 2 (48):", vfat2Registers["ctrl2"], ("Error" if (vfat2Registers["ctrl2"] != 48) else "Success"))
-            window.printLabel(0, 9, 24, "Control 3 (0):", vfat2Registers["ctrl3"], ("Error" if (vfat2Registers["ctrl3"] != 0) else "Success"))
-            window.printLabel(0, 10, 24, "Chip ID 0:", vfat2Registers["chipid0"])
-            window.printLabel(0, 11, 24, "Chip ID 1:", vfat2Registers["chipid1"])
+            window.printLabel(0, 9, 24, "Control 3 (0) :", vfat2Registers["ctrl3"], ("Error" if (vfat2Registers["ctrl3"] != 0) else "Success"))
+            window.printLabel(0, 10, 24, "Chip ID      :", hex((vfat2Registers["chipid1"]<<8)|vfat2Registers["chipid0"]))
+	    
             window.printLabel(27, 6, 24, "IPreampIn (168):", vfat2Registers["ipreampin"], ("Error" if (vfat2Registers["ipreampin"] != 168) else "Success"))
             window.printLabel(27, 7, 24, "IPreampFeed (80):", vfat2Registers["ipreampfeed"], ("Error" if (vfat2Registers["ipreampfeed"] != 80) else "Success"))
             window.printLabel(27, 8, 24, "IPreampOut (150):", vfat2Registers["ipreampout"], ("Error" if (vfat2Registers["ipreampout"] != 150) else "Success"))

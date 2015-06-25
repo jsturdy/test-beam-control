@@ -79,11 +79,11 @@ def mainWindow():
         window.clear(5, 1)
         #
         window.printLabel(0,  6,  24, "SBit VFAT2 select:",   (system["oh_sbit_select"] + 8))
-        window.printLabel(0,  7,  24, "Trigger source (1/2):", system["oh_trigger_source"], ("Error" if (system["oh_trigger_source"] != 1 and system["oh_trigger_source"] != 2) else "Success"))
+        window.printLabel(0,  7,  24, "Trigger source (1/2):", system["oh_trigger_source"],   ("Error" if (system["oh_trigger_source"]   != 1 and system["oh_trigger_source"] != 2) else "Success"))
         window.printLabel(27, 6,  24, "VFAT2 Clock (1):",      system["oh_vfat2_src_select"], ("Error" if (system["oh_vfat2_src_select"] != 1) else "Success"))
-        window.printLabel(27, 7,  24, "CDCE Clock (1):",       system["oh_cdce_src_select"], ("Error" if (system["oh_cdce_src_select"] != 1) else "Success"))
-        window.printLabel(54, 6,  24, "VFAT2 fallback (0):",   system["oh_vfat2_fallback"], ("Error" if (system["oh_vfat2_fallback"] != 0) else "Success"))
-        window.printLabel(54, 7,  24, "CDCE fallback (0):",    system["oh_cdce_fallback"], ("Error" if (system["oh_cdce_fallback"] != 0) else "Success"))
+        window.printLabel(27, 7,  24, "CDCE Clock (1):",       system["oh_cdce_src_select"],  ("Error" if (system["oh_cdce_src_select"]  != 1) else "Success"))
+        window.printLabel(54, 6,  24, "VFAT2 fallback (0):",   system["oh_vfat2_fallback"],   ("Error" if (system["oh_vfat2_fallback"]   != 0) else "Success"))
+        window.printLabel(54, 7,  24, "CDCE fallback (0):",    system["oh_cdce_fallback"],    ("Error" if (system["oh_cdce_fallback"]    != 0) else "Success"))
         window.printLabel(0,  9,  24, "Ext. LV1As:",           counters["oh_ext_lv1a_counter"])
         window.printLabel(0,  10, 24, "Int. LV1As:",           counters["oh_int_lv1a_counter"])
         window.printLabel(0,  11, 24, "Del. LV1As:",           counters["oh_del_lv1a_counter"])
@@ -188,7 +188,7 @@ def resetCountersWindow():
     #
     glib.resetCounters()
     #
-    window.printLine(-1, "Counters reseted!", "Success")
+    window.printLine(-1, "Counters reset!", "Success")
     #
     time.sleep(2)
 
