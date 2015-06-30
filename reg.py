@@ -1,3 +1,5 @@
+#!/bin/env python
+
 from kernel import *
 
 import uhal

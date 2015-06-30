@@ -1,3 +1,5 @@
+#!/bin/env python
+
 # System imports
 import time
 from kernel import *
