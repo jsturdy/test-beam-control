@@ -3,3 +3,5 @@
 kernel/glib_ip.dat
 *.dat
 *~
+*#
+*.#

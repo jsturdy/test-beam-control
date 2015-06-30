@@ -165,7 +165,7 @@ def setRegistersWindow():
     #
     window.printLine(-1, "Settings applied!", "Success")
     #
-    time.sleep(2)
+    time.sleep(0.5)
 
 #########################################
 #   Reset the counters                  #
@@ -190,7 +190,7 @@ def resetCountersWindow():
     #
     window.printLine(-1, "Counters reset!", "Success")
     #
-    time.sleep(2)
+    time.sleep(0.5)
 
 #########################################
 #   Set defaults                        #
@@ -232,7 +232,7 @@ def setDefaultsWindow():
     #
     window.printLine(-1, "Registers set!", "Success")
     #
-    time.sleep(2)
+    time.sleep(0.5)
 
 #########################################
 #   Main program                        #

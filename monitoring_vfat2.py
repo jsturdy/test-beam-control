@@ -206,7 +206,7 @@ def setRegistersWindow(vfat2ID):
     #
     window.printLine(-1, "Settings applied!", "Success")
     #
-    time.sleep(2)
+    time.sleep(0.5)
 
 #########################################
 #   Set defaults                        #
@@ -256,7 +256,7 @@ def setDefaultsWindow(vfat2ID):
     #
     window.printLine(-1, "Registers set!", "Success")
     #
-    time.sleep(2)
+    time.sleep(0.5)
 
 #########################################
 #   Main program                        #
@@ -283,7 +283,7 @@ while (True):
             # Error
             window.printLine(3, "The selected VFAT2 is not present!", "Error")
             # Timeout
-            time.sleep(3)
+            time.sleep(0.5)
         else: isConnected = True
     else:
         nextState = mainWindow(vfat2ID)

@@ -28,6 +28,7 @@ class GLIB:
         self.oh_control_link   = links[links.keys()[0]]
         self.glib_control_link = links.keys()[0]
         ipaddr = '192.168.0.%d'%(self.slot)
+        #address_table = "file://${BUILD_HOME}/data/testbeam_registers.xml"
         address_table = "file://${BUILD_HOME}/data/full_system_address_table.xml"
         uri = "chtcp-2.0://localhost:10203?target=%s:50001"%(ipaddr)
         self.glib = uhal.getDevice( "glib" , uri, address_table )
@@ -53,6 +54,10 @@ class GLIB:
     #   Add error support               #
     #####################################
 
+    # Print info
+    def printInfo(self, info, ignoreError = False):
+        if (self.window != False and ignoreError == False): self.window.printInfo(info)
+
     # Print error
     def throwError(self, error, ignoreError = False):
         if (self.window != False and ignoreError == False): self.window.throwError(error)
@@ -68,14 +73,14 @@ class GLIB:
             return False
         address = self.glib.getNode(register).getAddress()
         for i in range(0, 5):
-            #print "read trial %d on register %s (0x%x)"%(i,register,address)
+            #self.printInfo("read trial %d on register %s (0x%x)"%(i,register,address))
             try:
                 controlChar = self.glib.getNode(register).read()
                 self.glib.dispatch()
                 return controlChar
             except uhal.exception, e:
-                #print e
-                time.sleep(0.1)
+                self.printInfo(e)
+                time.sleep(0.01)
                 pass
         self.throwError("Could not read " + register, ignoreError)
         return False
@@ -91,7 +96,7 @@ class GLIB:
                 self.glib.dispatch()
                 return True
             except uhal.exception, e:
-                time.sleep(0.1)
+                time.sleep(0.01)
                 pass
         self.throwError("Could not write " + register, ignoreError)
         return False
@@ -130,6 +135,30 @@ class GLIB:
     def setOH(self, register, value, ignoreError = False):
         return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
 
+    # Send an L1A
+    def sendL1A(self, ignoreError = False):
+        register = "OptoHybrid_LINKS.LINK1.FAST_COM.Send.L1A"
+        value = 0x1
+        return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
+
+    # Send an CalPulse
+    def sendCalPulse(self, ignoreError = False):
+        register = "OptoHybrid_LINKS.LINK1.FAST_COM.Send.CalPulse"
+        value = 0x1
+        return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
+
+    # Send an Resync
+    def sendResync(self, ignoreError = False):
+        register = "OptoHybrid_LINKS.LINK1.FAST_COM.Send.Resync"
+        value = 0x1
+        return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
+
+    # Send an BC0
+    def sendBC0(self, ignoreError = False):
+        register = "OptoHybrid_LINKS.LINK1.FAST_COM.Send.BC0"
+        value = 0x1
+        return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
+
     #####################################
     #   VFAT2 helper functions          #
     #####################################
@@ -152,7 +181,7 @@ class GLIB:
         # Test read
         chipId = self.get("%s.VFAT%d.ChipID0"%(self.vfat_base,num), True)
         #
-        self.throwError("VFAT2 chip%d returns chipid0 0x%08x"%(num,chipId), False)
+        #self.printInfo("VFAT2 chip%d returns chipid0 0x%08x"%(num,chipId))
         if (chipId == False): return False
         elif (((chipId & 0x4000000) >> 26) == 1): return False
         else: return True
@@ -162,7 +191,7 @@ class GLIB:
         # Test read
         ctrl0 = self.get("%s.VFAT%d.ContReg0"%(self.vfat_base,num), True)
         #
-        self.throwError("VFAT2 chip%d returns ctrl0 0x%08x"%(num,ctrl0), False)
+        #self.printInfo("VFAT2 chip%d returns ctrl0 0x%08x"%(num,ctrl0))
         if (ctrl0 == False): return False
         elif (((ctrl0 & 0x4000000) >> 26) == 1): return False
         elif ((ctrl0 & 0x1) == 0x1): return True

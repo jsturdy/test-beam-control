@@ -42,7 +42,7 @@ while (True):
         # Error
         window.printLine(3, "The selected VFAT2 is not running!", "Error")
         # Timeout
-        time.sleep(3)
+        time.sleep(0.5)
     else: break
 
 # Limits select
