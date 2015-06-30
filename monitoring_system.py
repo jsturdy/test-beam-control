@@ -79,15 +79,16 @@ def mainWindow():
         window.clear(5, 1)
         #
         window.printLabel(0,  6,  24, "SBit VFAT2 select:",   (system["oh_sbit_select"] + 8))
-        window.printLabel(0,  7,  24, "Trigger source (1/2):", system["oh_trigger_source"],   ("Error" if (system["oh_trigger_source"]   != 1 and system["oh_trigger_source"] != 2) else "Success"))
+        window.printLabel(0,  7,  24, "OH Trigger source (1/2):",   system["oh_trigger_source"],   ("Error" if (system["oh_trigger_source"]   != 1 and system["oh_trigger_source"]   != 2) else "Success"))
+        window.printLabel(0,  8,  24, "GLIB Trigger source (1/2):", system["glib_trigger_source"], ("Error" if (system["glib_trigger_source"] != 1 and system["glib_trigger_source"] != 2) else "Success"))
         window.printLabel(27, 6,  24, "VFAT2 Clock (1):",      system["oh_vfat2_src_select"], ("Error" if (system["oh_vfat2_src_select"] != 1) else "Success"))
         window.printLabel(27, 7,  24, "CDCE Clock (1):",       system["oh_cdce_src_select"],  ("Error" if (system["oh_cdce_src_select"]  != 1) else "Success"))
         window.printLabel(54, 6,  24, "VFAT2 fallback (0):",   system["oh_vfat2_fallback"],   ("Error" if (system["oh_vfat2_fallback"]   != 0) else "Success"))
         window.printLabel(54, 7,  24, "CDCE fallback (0):",    system["oh_cdce_fallback"],    ("Error" if (system["oh_cdce_fallback"]    != 0) else "Success"))
-        window.printLabel(0,  9,  24, "Ext. LV1As:",           counters["oh_ext_lv1a_counter"])
-        window.printLabel(0,  10, 24, "Int. LV1As:",           counters["oh_int_lv1a_counter"])
-        window.printLabel(0,  11, 24, "Del. LV1As:",           counters["oh_del_lv1a_counter"])
-        window.printLabel(0,  12, 24, "# LV1As:",              counters["oh_lv1a_counter"])
+        window.printLabel(0,  9,  24, "Ext. LV1As:",     counters["oh_ext_lv1a_counter"])
+        window.printLabel(0,  10, 24, "Int. LV1As:",     counters["oh_int_lv1a_counter"])
+        window.printLabel(0,  11, 24, "Del. LV1As:",     counters["oh_del_lv1a_counter"])
+        window.printLabel(0,  12, 24, "# LV1As:",        counters["oh_lv1a_counter"])
         window.printLabel(27, 9,  24, "Int. Calpulses:", counters["oh_int_calpulse_counter"])
         window.printLabel(27, 10, 24, "Del. Calpulses:", counters["oh_del_calpulse_counter"])
         window.printLabel(27, 11, 24, "# Calpulses:",    counters["oh_calpulse_counter"])
@@ -131,12 +132,13 @@ def setRegistersWindow():
     # Get all the values to show
     systemRegisters = glib.saveSystem()
     #
-    sbitSelect = window.inputIntShifted(0, 7, "SBit VFAT2 select [8-13]:", 2, 8, 13, (systemRegisters["oh_sbit_select"] + 8))
-    triggerSource = window.inputIntShifted(0, 8, "Trigger source (2) [0-2]:", 1, 0, 2, systemRegisters["oh_trigger_source"])
-    vfat2Clk = window.inputIntShifted(0, 10, "VFAT2 Clock (1) [0-1]:", 1, 0, 1, systemRegisters["oh_vfat2_src_select"])
-    cdceClk = window.inputIntShifted(0, 11, "CDCE Clock (1) [0-1]:", 1, 0, 1, systemRegisters["oh_cdce_src_select"])
-    vfat2Fallback = window.inputIntShifted(0, 13, "VFAT2 fallback (0) [0-1]:", 1, 0, 1, systemRegisters["oh_vfat2_fallback"])
-    cdceFallback = window.inputIntShifted(0, 14, "CDCE fallback (0) [0-1]:", 1, 0, 1, systemRegisters["oh_cdce_fallback"])
+    sbitSelect        = window.inputIntShifted(0, 7, "SBit VFAT2 select [8-13]:",      2, 8, 13, (systemRegisters["oh_sbit_select"] + 8))
+    triggerSourceOH   = window.inputIntShifted(0, 8, "OH Trigger source (2) [0-2]:",   1, 0, 2, systemRegisters["oh_trigger_source"])
+    triggerSourceGLIB = window.inputIntShifted(0, 9, "GLIB Trigger source (2) [0-2]:", 1, 0, 2, systemRegisters["glib_trigger_source"])
+    vfat2Clk          = window.inputIntShifted(0, 10, "VFAT2 Clock (1) [0-1]:",        1, 0, 1, systemRegisters["oh_vfat2_src_select"])
+    cdceClk           = window.inputIntShifted(0, 11, "CDCE Clock (1) [0-1]:",         1, 0, 1, systemRegisters["oh_cdce_src_select"])
+    vfat2Fallback     = window.inputIntShifted(0, 13, "VFAT2 fallback (0) [0-1]:",     1, 0, 1, systemRegisters["oh_vfat2_fallback"])
+    cdceFallback      = window.inputIntShifted(0, 14, "CDCE fallback (0) [0-1]:",      1, 0, 1, systemRegisters["oh_cdce_fallback"])
     #
     window.printLine(-1, "Apply the changes? [y]es, [n]o", "Options")
     #
@@ -145,14 +147,20 @@ def setRegistersWindow():
         if (pressedKey == ord('n')): return
         elif (pressedKey == ord('y')): break
     #
-    if (triggerSource != systemRegisters["oh_trigger_source"]): glib.set("oh_trigger_source", triggerSource)
+    if (triggerSourceOH != systemRegisters["oh_trigger_source"]):
+	    glib.setOHTriggerSource(triggerSourceOH)
+    if (triggerSourceGLIB != systemRegisters["glib_trigger_source"]):
+	    glib.setGLIBTriggerSource(triggerSourceGLIB)
     if (sbitSelect != systemRegisters["oh_sbit_select"]):
-        glib.set("oh_sbit_select", (sbitSelect - 8))
-        glib.set("glib_sbit_select", (sbitSelect - 8))
-    if (vfat2Clk != systemRegisters["oh_vfat2_src_select"]): glib.set("oh_vfat2_src_select", vfat2Clk)
-    if (cdceClk != systemRegisters["oh_cdce_src_select"]): glib.set("oh_cdce_src_select", cdceClk)
-    if (vfat2Fallback != systemRegisters["oh_vfat2_fallback"]): glib.set("oh_vfat2_fallback", vfat2Fallback)
-    if (cdceFallback != systemRegisters["oh_cdce_fallback"]): glib.set("oh_cdce_fallback", cdceFallback)
+	    glib.setSBitSource(sbitSelect - 8)
+    if (vfat2Clk != systemRegisters["oh_vfat2_src_select"]):
+	    glib.setVFATSrc(vfat2Clk)
+    if (cdceClk  != systemRegisters["oh_cdce_src_select"]):
+	    glib.setCDCESrc(cdceClk)
+    if (vfat2Fallback != systemRegisters["oh_vfat2_fallback"]):
+	    glib.setVFATBkp(vfat2Fallback)
+    if (cdceFallback  != systemRegisters["oh_cdce_fallback"]):
+	    glib.setCDCEBkp(cdceFallback)
     #
     newRegisters = glib.saveSystem()
     # Log
@@ -213,13 +221,7 @@ def setDefaultsWindow():
     #
     systemRegisters = glib.saveSystem()
     #
-    glib.set("oh_trigger_source", 2)
-    glib.set("oh_sbit_select", 0)
-    glib.set("glib_sbit_select", 0)
-    glib.set("oh_vfat2_src_select", 1)
-    glib.set("oh_cdce_src_select", 1)
-    glib.set("oh_vfat2_fallback", 0)
-    glib.set("oh_cdce_fallback", 0)
+    glib.systemDefault()
     #
     newRegisters = glib.saveSystem()
     # Log

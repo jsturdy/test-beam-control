@@ -118,6 +118,18 @@ class GLIB:
     def setGLIB(self, register, value, ignoreError = False):
         return self.set("%s.%s"%(self.glib_base,register), value, ignoreError)
 
+    # Flush the tracking data FIFO
+    def flushFIFO(self, ignoreError = False):
+        register = "GLIB_LINKS.LINK%d.TRK_FIFO.FLUSH"%(self.glib_control_link)
+        value = 0x1
+        return self.set("%s.%s"%(self.glib_base,register), value, ignoreError)
+
+    # Query the tracking data FIFO depth
+    def hasData(self, ignoreError = False):
+        register = "OptoHybrid.GEB.TRK_DATA.COL%d.DATA_RDY"%(self.oh_control_link)
+        value = 0x1
+        return self.get("%s"%(register), value, ignoreError)
+
     #####################################
     #   OH helper functions             #
     #####################################
@@ -137,25 +149,25 @@ class GLIB:
 
     # Send an L1A
     def sendL1A(self, ignoreError = False):
-        register = "OptoHybrid_LINKS.LINK1.FAST_COM.Send.L1A"
+        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.L1A"%(oh_control_link)
         value = 0x1
         return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
 
     # Send an CalPulse
     def sendCalPulse(self, ignoreError = False):
-        register = "OptoHybrid_LINKS.LINK1.FAST_COM.Send.CalPulse"
+        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.CalPulse"%(oh_control_link)
         value = 0x1
         return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
 
     # Send an Resync
     def sendResync(self, ignoreError = False):
-        register = "OptoHybrid_LINKS.LINK1.FAST_COM.Send.Resync"
+        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.Resync"%(oh_control_link)
         value = 0x1
         return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
 
     # Send an BC0
     def sendBC0(self, ignoreError = False):
-        register = "OptoHybrid_LINKS.LINK1.FAST_COM.Send.BC0"
+        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.BC0"%(oh_control_link)
         value = 0x1
         return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
 
@@ -257,6 +269,7 @@ class GLIB:
         data["oh_vfat2_fallback"]   = self.getOH("OptoHybrid_LINKS.LINK%d.CLOCKING.VFAT.FALLBACK"%(self.oh_control_link))
         data["oh_cdce_fallback"]    = self.getOH("OptoHybrid_LINKS.LINK%d.CLOCKING.CDCE.FALLBACK"%(self.oh_control_link))
         data["glib_sbit_select"]    = self.getGLIB("GLIB_LINKS.LINK%d.TRIGGER.TDC_SBits"%(self.glib_control_link))
+        data["glib_trigger_source"] = self.getGLIB("GLIB_LINKS.LINK%d.TRIGGER.SOURCE"%(self.glib_control_link))
         return data
 
     # Restore system configuration
@@ -268,6 +281,47 @@ class GLIB:
         self.setOH("OptoHybrid_LINKS.LINK%d.CLOCKING.VFAT.FALLBACK"%(self.oh_control_link), data["oh_vfat2_fallback"])
         self.setOH("OptoHybrid_LINKS.LINK%d.CLOCKING.CDCE.FALLBACK"%(self.oh_control_link), data["oh_cdce_fallback"])
         self.setGLIB("GLIB_LINKS.LINK%d.TRIGGER.TDC_SBits"%(self.glib_control_link),        data["glib_sbit_select"])
+        self.getGLIB("GLIB_LINKS.LINK%d.TRIGGER.SOURCE"%(self.glib_control_link),           data["glib_trigger_source"])
+
+    # Restore system configuration
+    def systemDefault(self):
+        self.setGLIB("GLIB_LINKS.LINK%d.TRIGGER.TDC_SBits"%(self.glib_control_link),        0x0)
+        self.setGLIB("GLIB_LINKS.LINK%d.TRIGGER.SOURCE"%(self.glib_control_link),           0x2)
+        self.setOH("OptoHybrid_LINKS.LINK%d.TRIGGER.SOURCE"%(self.oh_control_link),         0x2)
+        self.setOH("OptoHybrid_LINKS.LINK%d.TRIGGER.TDC_SBits"%(self.oh_control_link),      0x0)
+        self.setOH("OptoHybrid_LINKS.LINK%d.CLOCKING.VFAT.SOURCE"%(self.oh_control_link),   0x1)
+        self.setOH("OptoHybrid_LINKS.LINK%d.CLOCKING.CDCE.SOURCE"%(self.oh_control_link),   0x1)
+        self.setOH("OptoHybrid_LINKS.LINK%d.CLOCKING.VFAT.FALLBACK"%(self.oh_control_link), 0x0)
+        self.setOH("OptoHybrid_LINKS.LINK%d.CLOCKING.CDCE.FALLBACK"%(self.oh_control_link), 0x0)
+
+    # Set the OH trigger source
+    def setOHTriggerSource(self, source):
+        self.setOH("OptoHybrid_LINKS.LINK%d.TRIGGER.SOURCE"%(self.oh_control_link), source)
+
+    # Set the GLIB trigger source
+    def setGLIBTriggerSource(self, source):
+        self.setGLIB("GLIB_LINKS.LINK%d.TRIGGER.SOURCE"%(self.oh_control_link), source)
+
+    # Set the SBit source
+    def setSBitSource(self, source):
+        self.setGLIB("GLIB_LINKS.LINK%d.TRIGGER.TDC_SBits"%(self.glib_control_link),   source)
+        self.setOH("OptoHybrid_LINKS.LINK%d.TRIGGER.TDC_SBits"%(self.oh_control_link), source)
+
+    # Set the VFAT clock source
+    def setVFATClkSrc(self, source):
+        self.setOH("OptoHybrid_LINKS.LINK%d.CLOCKING.VFAT.SOURCE"%(self.oh_control_link), source)
+
+    # Set the VFAT clock fallback
+    def setVFATClkBkp(self, backup):
+        self.setOH("OptoHybrid_LINKS.LINK%d.CLOCKING.VFAT.FALLBACK"%(self.oh_control_link), backup)
+
+    # Set the CDCE clock source
+    def setCDCEClkSrc(self, source):
+        self.setOH("OptoHybrid_LINKS.LINK%d.CLOCKING.CDCE.SOURCE"%(self.oh_control_link), source)
+
+    # Set the CDCE clock fallback
+    def setCDCEClkBkp(self, backup):
+        self.setOH("OptoHybrid_LINKS.LINK%d.CLOCKING.CDCE.FALLBACK"%(self.oh_control_link), backup)
 
     # Get the counters
     def saveCounters(self):

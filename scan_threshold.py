@@ -88,10 +88,10 @@ for threshold in range(minimumValue, maximumValue):
     glib.setVFAT2(vfat2ID, "vthreshold1", threshold)
 
     # Send Resync signal
-    glib.set("oh_resync", 1)
+    glib.sendResync()
 
     # Empty tracking fifo
-    glib.set("glib_empty_trigger_data", 1)
+    glib.flushFIFO()
 
     # Efficiency variable
     hitCount = 0.
@@ -106,14 +106,14 @@ for threshold in range(minimumValue, maximumValue):
 
         # Get a tracking packet (with a limit)
         while (True):
-            if (glib.get("glib_request_tracking_data") == 0x1): break
-            else: glib.set("oh_lv1a", 1)
+            if (glib.hasData() == 0x1): break
+            else: glib.sendL1A()
 
-        packet1 = glib.get("glib_tracking_data_1")
-        packet2 = glib.get("glib_tracking_data_2")
-        packet3 = glib.get("glib_tracking_data_3")
-        packet4 = glib.get("glib_tracking_data_4")
-        packet5 = glib.get("glib_tracking_data_5")
+        packet1 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.1")
+        packet2 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.2")
+        packet3 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.3")
+        packet4 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.4")
+        packet5 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.5")
 
         # Check Chipid
         chipid = (0x00ff0000 & packet5) >> 16
