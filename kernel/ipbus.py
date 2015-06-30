@@ -35,10 +35,10 @@ class GLIB:
         #self.glib_base = self.glib.getNode("GLIB.GLIB")
         #self.oh_base   = self.glib.getNode("OptoHybrid.OptoHybrid")
         #self.vfat_base = self.glib.getNode("OptoHybrid.OptoHybrid.GEB.VFATS")
-        print self.vfat_base
-        print self.glib_base
-        print self.oh_base
-        print "OptoHybrid.OptoHybrid.OptoHybrid_LINKS.LINK1.CLOCKING.VFAT.SOURCE" in self.glib.getNodes()
+        self.printInfo(self.vfat_base)
+        self.printInfo(self.glib_base)
+        self.printInfo(self.oh_base)
+        self.printInfo("OptoHybrid.OptoHybrid.OptoHybrid_LINKS.LINK1.CLOCKING.VFAT.SOURCE" in self.glib.getNodes())
         #print self.glib_base.getNodes()
         #print "GLIB.GLIB_LINKS.LINK1.OPTICAL_LINKS.Counter.SntRegRequests" in self.glib_base.getNodes()
         #exit(1)
