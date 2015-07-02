@@ -4,11 +4,35 @@
 import time
 from kernel import *
 
+
+import uhal
+
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-s", "--slot", type="int", dest="slot",
+		  help="slot in uTCA crate", metavar="slot", default=4)
+
+parser.add_option("-o", "--links", type="string", dest="activeLinks", action='append',
+		  help="pair of connected optical links (GLIB,OH)", metavar="activeLinks", default=[])
+(options, args) = parser.parse_args()
+
+links = {}
+for link in options.activeLinks:
+	pair = map(int, link.split(","))
+	links[pair[0]] = pair[1]
+print "links", links
+
+uhal.setLogLevelTo( uhal.LogLevel.FATAL )
+
+if not links.keys():
+    print "No optical links specified, exiting"
+    exit(1)
+
 # Create window
 window = Window("S-Curve")
 
 # Get GLIB access
-glib = GLIB()
+glib = GLIB(options.slog,links)
 glib.setWindow(window)
 
 # Warning
@@ -49,14 +73,14 @@ else:
     save.writeLine("--- Data points ---")
 
     # Common parameters
-    glib.setVFAT2(vfat2ID, "ctrl0", 119)
-    glib.setVFAT2(vfat2ID, "ctrl2", 112)
-    glib.setVFAT2(vfat2ID, "latency", 10)
-    glib.setVFAT2(vfat2ID, "channel8", 64)
-    # glib.setVFAT2(vfat2ID, "channel9", 64)
-    # glib.setVFAT2(vfat2ID, "channel10", 64)
-    glib.setVFAT2(vfat2ID, "vthreshold1", threshold)
-    glib.setVFAT2(vfat2ID, "vcal", 255)
+    glib.setVFAT2(vfat2ID, "ContReg0", 119)
+    glib.setVFAT2(vfat2ID, "ContReg2", 112)
+    glib.setVFAT2(vfat2ID, "Latency", 10)
+    glib.setVFAT2Channel(vfat2ID, 8, 64)
+    # glib.setVFAT2Channel(vfat2ID, 9, 64)
+    # glib.setVFAT2Channel(vfat2ID, 10, 64)
+    glib.setVFAT2(vfat2ID, "VThreshold1", threshold)
+    glib.setVFAT2(vfat2ID, "VCal", 255)
 
     # Create a plot and its data
     vcalValues = []
@@ -66,18 +90,20 @@ else:
     for vcal in range(minimumValue, maximumValue):
 
         # Set threshold
-        glib.setVFAT2(vfat2ID, "latency", vcal)
+        glib.setVFAT2(vfat2ID, "Latency", vcal)
+        glib.disableVFAT2(vfat2ID)
 
         # Send Resync signal
-        glib.set("oh_resync", 1)
+        glib.sendResync()
 
         # Empty tracking fifo
-        glib.set("glib_empty_tracking_data", 1)
+        glib.flushFIFO()
 
         # Efficiency variable
         hitCount = 0.
         event = 0
 
+        glib.enableVFAT2(vfat2ID)
         # Read tracking packets
         while (event < nEvents):
 
@@ -126,9 +152,9 @@ else:
 
     # Reset the VFAT2 parameters
     glib.restoreVFAT2(vfat2ID, vfat2Parameters)
-    glib.setVFAT2(vfat2ID, "channel8", 0)
-    glib.setVFAT2(vfat2ID, "channel9", 0)
-    glib.setVFAT2(vfat2ID, "channel10", 0)
+    glib.setVFAT2Channel(vfat2ID, 8,  0)
+    glib.setVFAT2Channel(vfat2ID, 9,  0)
+    glib.setVFAT2Channel(vfat2ID, 10, 0)
 
     # Close the save file
     save.close()

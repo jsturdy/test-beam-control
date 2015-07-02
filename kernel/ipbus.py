@@ -188,6 +188,26 @@ class GLIB:
     def setVFAT2(self, num, register, value, ignoreError = False):
         return self.set("%s.VFAT%d.%s"%(self.vfat_base,num,register), value, ignoreError)
 
+    # Get VFAT2 channel register
+    def getVFAT2Channel(self, num, chan, ignoreError = False):
+        return self.getVFAT2(num, "VFATChannels.ChanReg%d"%(chan), ignoreError)
+
+    # Write VFAT2 channel register
+    def setVFAT2(self, num, register, value, ignoreError = False):
+        return self.setVFAT2(num, "VFATChannels.ChanReg%d"%(chan), value, ignoreError)
+
+    # Enable run mode for VFAT2
+    def enableVFAT2(self, num, ignoreError = False):
+        cr0val = self.getVFAT2(num,"ContReg0", ignoreError)
+        cr0val |= 0x1
+        return self.setVFAT2(num, "ContReg0", cr0val, ignoreError)
+
+    # Disable run mode for VFAT2
+    def disableVFAT2(self, num, ignoreError = False):
+        cr0val = self.getVFAT2(num,"ContReg0", ignoreError)
+        cr0val &= 0xFFFFFFF0
+        return self.setVFAT2(num, "ContReg0", cr0val, ignoreError)
+
     # Test if VFAT2 is connected
     def isVFAT2Present(self, num):
         # Test read

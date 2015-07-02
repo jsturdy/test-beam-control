@@ -111,6 +111,10 @@ for latency in range(minimumValue, maximumValue):
 
     # Set latency
     glib.setVFAT2(vfat2ID, "Latency", latency)
+    glib.disableVFAT2(vfat2ID)
+    # Efficiency variable
+    hitCount = 0.
+    event = 0.
 
     # Send Resync signal
     glib.sendResync()
@@ -118,10 +122,7 @@ for latency in range(minimumValue, maximumValue):
     # Empty tracking fifo
     glib.flushFIFO()
 
-    # Efficiency variable
-    hitCount = 0.
-    event = 0.
-
+    glib.enableVFAT2(vfat2ID)
     # Read tracking packets
     while (event < nEvents):
 
