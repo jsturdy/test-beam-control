@@ -4,11 +4,34 @@
 import time
 from kernel import *
 
+import uhal
+
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-s", "--slot", type="int", dest="slot",
+		  help="slot in uTCA crate", metavar="slot", default=4)
+
+parser.add_option("-o", "--links", type="string", dest="activeLinks", action='append',
+		  help="pair of connected optical links (GLIB,OH)", metavar="activeLinks", default=[])
+(options, args) = parser.parse_args()
+
+links = {}
+for link in options.activeLinks:
+	pair = map(int, link.split(","))
+	links[pair[0]] = pair[1]
+print "links", links
+
+uhal.setLogLevelTo( uhal.LogLevel.FATAL )
+
+if not links.keys():
+    print "No optical links specified, exiting"
+    exit(1)
+
 # Create window
 window = Window("Scan a VFAT2's latency")
 
 # Get GLIB access
-glib = GLIB()
+glib = GLIB(options.slot,links)
 glib.setWindow(window)
 
 #########################################
@@ -110,11 +133,11 @@ for latency in range(minimumValue, maximumValue):
         while (True):
             if (glib.hasData() == 0x1): break
 
-        packet1 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.1")
-        packet2 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.2")
-        packet3 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.3")
-        packet4 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.4")
-        packet5 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.5")
+        packet1 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.1")
+        packet2 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.2")
+        packet3 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.3")
+        packet4 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.4")
+        packet5 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.5")
 
         # Check Chipid
         chipid = (0x00ff0000 & packet5) >> 16

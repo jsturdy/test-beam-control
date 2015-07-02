@@ -5,6 +5,30 @@ import time
 from kernel import *
 import matplotlib.pyplot as plt
 
+
+import uhal
+
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-s", "--slot", type="int", dest="slot",
+		  help="slot in uTCA crate", metavar="slot", default=4)
+
+parser.add_option("-o", "--links", type="string", dest="activeLinks", action='append',
+		  help="pair of connected optical links (GLIB,OH)", metavar="activeLinks", default=[])
+(options, args) = parser.parse_args()
+
+links = {}
+for link in options.activeLinks:
+	pair = map(int, link.split(","))
+	links[pair[0]] = pair[1]
+print "links", links
+
+uhal.setLogLevelTo( uhal.LogLevel.FATAL )
+
+if not links.keys():
+    print "No optical links specified, exiting"
+    exit(1)
+
 def stripMapping(vfat2Strips):
     # Mapping
     stripsToConnector = [ 64, 65, 63, 66, 62, 67, 61, 68, 60, 69, 59, 70, 58, 71, 57, 72, 56, 73, 55, 74, 54, 75, 53, 76, 52, 77, 51, 78, 50, 79, 49, 80, 48, 81, 47, 82, 46, 83, 45, 84, 44, 85, 43, 86, 42, 87, 41, 88, 40, 89, 39, 90, 38, 91, 37, 92, 36, 93, 35, 94, 34, 95, 33, 96, 32, 97, 31, 98, 30, 99, 29, 100, 28, 101, 27, 102, 26, 103, 25, 104, 24, 105, 23, 106, 22, 107, 21, 108, 20, 109, 19, 110, 18, 111, 17, 112, 16, 113, 15, 114, 14, 115, 13, 116, 12, 117, 11, 118, 10, 119, 9, 120, 8, 121, 7, 122, 6, 123, 5, 124, 4, 125, 3, 126, 2, 127, 1, 128 ]
@@ -22,7 +46,7 @@ def stripMapping(vfat2Strips):
 window = Window("Scan a VFAT2's threshold by channel")
 
 # Get GLIB access
-glib = GLIB()
+glib = GLIB(options.slot,links)
 glib.setWindow(window)
 
 #########################################
@@ -97,7 +121,7 @@ save.writeLine("--- Data points ---")
 for threshold in range(minimumValue, maximumValue):
 
     # Set threshold
-    glib.setVFAT2(vfat2ID, "vthreshold1", threshold)
+    glib.setVFAT2(vfat2ID, "VThreshold1", threshold)
 
     # Send Resync signal
     glib.sendResync()
@@ -121,11 +145,11 @@ for threshold in range(minimumValue, maximumValue):
             if (glib.hasData() == 0x1): break
             else: glib.sendL1A()
 
-        packet1 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.1")
-        packet2 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.2")
-        packet3 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.3")
-        packet4 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.4")
-        packet5 = glib.get("OptoHybrid.GEB.TRK_DATA.COL1.DATA_RDY.5")
+        packet1 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.1")
+        packet2 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.2")
+        packet3 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.3")
+        packet4 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.4")
+        packet5 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.5")
 
         # Check Chipid
         chipid = (0x00ff0000 & packet5) >> 16

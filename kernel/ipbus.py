@@ -79,7 +79,7 @@ class GLIB:
                 self.glib.dispatch()
                 return controlChar
             except uhal.exception, e:
-                self.printInfo(e)
+                #self.printInfo(e.str())
                 time.sleep(0.01)
                 pass
         self.throwError("Could not read " + register, ignoreError)
@@ -126,9 +126,9 @@ class GLIB:
 
     # Query the tracking data FIFO depth
     def hasData(self, ignoreError = False):
-        register = "OptoHybrid.GEB.TRK_DATA.COL%d.DATA_RDY"%(self.oh_control_link)
+        register = "OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL%d.DATA_RDY"%(self.oh_control_link)
         value = 0x1
-        return self.get("%s"%(register), value, ignoreError)
+        return self.get("%s"%(register), ignoreError)
 
     #####################################
     #   OH helper functions             #
@@ -149,25 +149,25 @@ class GLIB:
 
     # Send an L1A
     def sendL1A(self, ignoreError = False):
-        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.L1A"%(oh_control_link)
+        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.L1A"%(self.oh_control_link)
         value = 0x1
         return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
 
     # Send an CalPulse
     def sendCalPulse(self, ignoreError = False):
-        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.CalPulse"%(oh_control_link)
+        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.CalPulse"%(self.oh_control_link)
         value = 0x1
         return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
 
     # Send an Resync
     def sendResync(self, ignoreError = False):
-        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.Resync"%(oh_control_link)
+        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.Resync"%(self.oh_control_link)
         value = 0x1
         return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
 
     # Send an BC0
     def sendBC0(self, ignoreError = False):
-        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.BC0"%(oh_control_link)
+        register = "OptoHybrid_LINKS.LINK%d.FAST_COM.Send.BC0"%(self.oh_control_link)
         value = 0x1
         return self.set("%s.%s"%(self.oh_base,register), value, ignoreError)
 
@@ -256,7 +256,7 @@ class GLIB:
             self.setVFAT2(num, "VThreshold1", data["vthreshold1"])
             self.setVFAT2(num, "VThreshold2", data["vthreshold2"])
             self.setVFAT2(num, "CalPhase",    data["calphase"])
-            self.set("oh_resync", 0x1)
+            self.sendResync()
             return True
 
     # Save system configuration
