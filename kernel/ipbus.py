@@ -29,7 +29,10 @@ class GLIB:
         self.glib_control_link = links.keys()[0]
         ipaddr = '192.168.0.%d'%(self.slot)
         #address_table = "file://${BUILD_HOME}/data/testbeam_registers.xml"
-        address_table = "file://${BUILD_HOME}/data/full_system_address_table.xml"
+        #address_table = "file://${BUILD_HOME}/data/full_system_address_table.xml"
+        address_table = "file://${BUILD_HOME}/data/glib_address_table.xml"
+        #address_table = "file://${BUILD_HOME}/data/optohybrid_address_table.xml"
+        #address_table = "file://${BUILD_HOME}/data/geb_vfat_address_table.xml"
         uri = "chtcp-2.0://localhost:10203?target=%s:50001"%(ipaddr)
         self.glib = uhal.getDevice( "glib" , uri, address_table )
         #self.glib_base = self.glib.getNode("GLIB.GLIB")
@@ -193,19 +196,23 @@ class GLIB:
         return self.getVFAT2(num, "VFATChannels.ChanReg%d"%(chan), ignoreError)
 
     # Write VFAT2 channel register
-    def setVFAT2(self, num, register, value, ignoreError = False):
+    def setVFAT2Chanel(self, num, register, value, ignoreError = False):
         return self.setVFAT2(num, "VFATChannels.ChanReg%d"%(chan), value, ignoreError)
 
     # Enable run mode for VFAT2
     def enableVFAT2(self, num, ignoreError = False):
-        cr0val = self.getVFAT2(num,"ContReg0", ignoreError)
-        cr0val |= 0x1
+        cr0val = self.getVFAT2(num, "ContReg0", ignoreError)
+        #self.printInfo("Enabling VFAT%d returns CR0 0x%08x"%(num,cr0val))
+        cr0val |= 0x00000001
+        #self.printInfo("Enabling VFAT%d returns CR0 0x%08x"%(num,cr0val))
         return self.setVFAT2(num, "ContReg0", cr0val, ignoreError)
 
     # Disable run mode for VFAT2
     def disableVFAT2(self, num, ignoreError = False):
-        cr0val = self.getVFAT2(num,"ContReg0", ignoreError)
-        cr0val &= 0xFFFFFFF0
+        cr0val = self.getVFAT2(num, "ContReg0", ignoreError)
+        #self.printInfo("Disabling VFAT%d returns CR0 0x%08x"%(num,cr0val))
+        cr0val &= 0xFFFFFFFE
+        #self.printInfo("Disabling VFAT%d setting CR0 0x%08x"%(num,cr0val))
         return self.setVFAT2(num, "ContReg0", cr0val, ignoreError)
 
     # Test if VFAT2 is connected

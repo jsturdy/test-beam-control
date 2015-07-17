@@ -21,7 +21,8 @@ import uhal
 #
 uhal.setLogLevelTo( uhal.LogLevel.FATAL )
 
-glib = GLIB(2,{0:0, 2:2})
+#glib = GLIB(2,{0:0, 1:1, 2:2})
+glib = GLIB(4,{1:1})
 #glib = GLIB()
 
 if (sys.argv[1] == 'w' and len(sys.argv) == 4):

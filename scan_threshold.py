@@ -112,6 +112,10 @@ for threshold in range(minimumValue, maximumValue):
     # Set threshold
     glib.setVFAT2(vfat2ID, "VThreshold1", threshold)
     glib.disableVFAT2(vfat2ID)
+    glib.disableVFAT2(vfat2ID)
+    for vfat in [8,9,10,11,12,13]:
+        glib.setVFAT2(vfat, "VThreshold1", threshold)
+        glib.disableVFAT2(vfat)
     # Efficiency variable
     hitCount = 0.
     event = 0.
@@ -123,6 +127,8 @@ for threshold in range(minimumValue, maximumValue):
     glib.flushFIFO()
 
     glib.enableVFAT2(vfat2ID)
+    for vfat in [8,9,10,11,12,13]:
+        glib.enableVFAT2(vfat)
     # Read tracking packets
     while (event < nEvents):
 

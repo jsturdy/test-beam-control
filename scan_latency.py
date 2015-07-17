@@ -112,6 +112,9 @@ for latency in range(minimumValue, maximumValue):
     # Set latency
     glib.setVFAT2(vfat2ID, "Latency", latency)
     glib.disableVFAT2(vfat2ID)
+    for vfat in [8,9,10,11,12,13]:
+        glib.setVFAT2(vfat, "Latency", latency)
+        glib.disableVFAT2(vfat)
     # Efficiency variable
     hitCount = 0.
     event = 0.
@@ -123,6 +126,8 @@ for latency in range(minimumValue, maximumValue):
     glib.flushFIFO()
 
     glib.enableVFAT2(vfat2ID)
+    for vfat in [8,9,10,11,12,13]:
+        glib.enableVFAT2(vfat)
     # Read tracking packets
     while (event < nEvents):
 
@@ -142,9 +147,11 @@ for latency in range(minimumValue, maximumValue):
 
         # Check Chipid
         chipid = (0x00ff0000 & packet5) >> 16
-        #if (chipid != vfat2Parameters["chipid0"]): continue
-        #else: event += 1
-        event += 1
+	## does this look at the bins for all chips?
+	## have to set up all chips the same way, anyway...
+        if (chipid != vfat2Parameters["chipid0"]): pass#continue
+        else: event += 1
+        #event += 1
 
 
         data1 = ((0x00007fff & packet5) << 16) | ((0xffff0000 & packet4) >> 16)

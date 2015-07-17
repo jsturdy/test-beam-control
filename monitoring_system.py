@@ -156,13 +156,13 @@ def setRegistersWindow():
     if (sbitSelect != systemRegisters["oh_sbit_select"]):
 	    glib.setSBitSource(sbitSelect - 8)
     if (vfat2Clk != systemRegisters["oh_vfat2_src_select"]):
-	    glib.setVFATSrc(vfat2Clk)
+	    glib.setVFATClkSrc(vfat2Clk)
     if (cdceClk  != systemRegisters["oh_cdce_src_select"]):
-	    glib.setCDCESrc(cdceClk)
+	    glib.setCDCEClkSrc(cdceClk)
     if (vfat2Fallback != systemRegisters["oh_vfat2_fallback"]):
-	    glib.setVFATBkp(vfat2Fallback)
+	    glib.setVFATClkBkp(vfat2Fallback)
     if (cdceFallback  != systemRegisters["oh_cdce_fallback"]):
-	    glib.setCDCEBkp(cdceFallback)
+	    glib.setCDCEClkBkp(cdceFallback)
     #
     newRegisters = glib.saveSystem()
     # Log
