@@ -29,8 +29,8 @@ class GLIB:
         self.glib_control_link = links.keys()[0]
         ipaddr = '192.168.0.%d'%(self.slot)
         #address_table = "file://${BUILD_HOME}/data/testbeam_registers.xml"
-        #address_table = "file://${BUILD_HOME}/data/full_system_address_table.xml"
-        address_table = "file://${BUILD_HOME}/data/glib_address_table.xml"
+        address_table = "file://${BUILD_HOME}/data/full_system_address_table.xml"
+        #address_table = "file://${BUILD_HOME}/data/glib_address_table.xml"
         #address_table = "file://${BUILD_HOME}/data/optohybrid_address_table.xml"
         #address_table = "file://${BUILD_HOME}/data/geb_vfat_address_table.xml"
         uri = "chtcp-2.0://localhost:10203?target=%s:50001"%(ipaddr)
