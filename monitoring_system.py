@@ -1,12 +1,37 @@
+#!/bin/env python
+
 # System imports
 import time
 from kernel import *
+
+import uhal
+
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-s", "--slot", type="int", dest="slot",
+		  help="slot in uTCA crate", metavar="slot", default=4)
+
+parser.add_option("-o", "--links", type="string", dest="activeLinks", action='append',
+		  help="pair of connected optical links (GLIB,OH)", metavar="activeLinks", default=[])
+(options, args) = parser.parse_args()
+
+links = {}
+for link in options.activeLinks:
+	pair = map(int, link.split(","))
+	links[pair[0]] = pair[1]
+print "links", links
+
+uhal.setLogLevelTo( uhal.LogLevel.FATAL )
+
+if not links.keys():
+    print "No optical links specified, exiting"
+    exit(1)
 
 # Create window
 window = Window("System monitoring")
 
 # Get GLIB access
-glib = GLIB()
+glib = GLIB(options.slot,links)
 glib.setWindow(window)
 
 #########################################
@@ -55,31 +80,34 @@ def mainWindow():
         # Clear line
         window.clear(5, 1)
         #
-        window.printLabel(0, 6, 24, "SBit VFAT2 select:", (system["oh_sbit_select"] + 8))
-        window.printLabel(0, 7, 24, "Trigger source (1/2):", system["oh_trigger_source"], ("Error" if (system["oh_trigger_source"] != 1 and system["oh_trigger_source"] != 2) else "Success"))
-        window.printLabel(27, 6, 24, "VFAT2 Clock (1):", system["oh_vfat2_src_select"], ("Error" if (system["oh_vfat2_src_select"] != 1) else "Success"))
-        window.printLabel(27, 7, 24, "CDCE Clock (1):", system["oh_cdce_src_select"], ("Error" if (system["oh_cdce_src_select"] != 1) else "Success"))
-        window.printLabel(54, 6, 24, "VFAT2 fallback (0):", system["oh_vfat2_fallback"], ("Error" if (system["oh_vfat2_fallback"] != 0) else "Success"))
-        window.printLabel(54, 7, 24, "CDCE fallback (0):", system["oh_cdce_fallback"], ("Error" if (system["oh_cdce_fallback"] != 0) else "Success"))
-        window.printLabel(0, 9, 24, "Ext. LV1As:", counters["oh_ext_lv1a_counter"])
-        window.printLabel(0, 10, 24, "Int. LV1As:", counters["oh_int_lv1a_counter"])
-        window.printLabel(0, 11, 24, "Del. LV1As:", counters["oh_del_lv1a_counter"])
-        window.printLabel(0, 12, 24, "# LV1As:", counters["oh_lv1a_counter"])
-        window.printLabel(27, 9, 24, "Int. Calpulses:", counters["oh_int_calpulse_counter"])
+        window.printLabel(0,  6,  24, "SBit VFAT2 select:",   (system["oh_sbit_select"] + 8))
+        window.printLabel(0,  7,  24, "OH Trg src (1/2):",   system["oh_trigger_source"],   ("Error" if (system["oh_trigger_source"]   != 1 and system["oh_trigger_source"]   != 2) else "Success"))
+        window.printLabel(0,  8,  24, "GLIB Trg src (1/2):", system["glib_trigger_source"], ("Error" if (system["glib_trigger_source"] != 1 and system["glib_trigger_source"] != 2) else "Success"))
+        window.printLabel(27, 6,  24, "VFAT2 Clock (1):",    system["oh_vfat2_src_select"], ("Error" if (system["oh_vfat2_src_select"] != 1) else "Success"))
+        window.printLabel(27, 7,  24, "CDCE Clock (1):",     system["oh_cdce_src_select"],  ("Error" if (system["oh_cdce_src_select"]  != 1) else "Success"))
+        window.printLabel(54, 6,  24, "VFAT2 fallback (0):", system["oh_vfat2_fallback"],   ("Error" if (system["oh_vfat2_fallback"]   != 0) else "Success"))
+        window.printLabel(54, 7,  24, "CDCE fallback (0):",  system["oh_cdce_fallback"],    ("Error" if (system["oh_cdce_fallback"]    != 0) else "Success"))
+        window.printLabel(0,  9,  24, "Ext. LV1As:",     counters["oh_ext_lv1a_counter"])
+        window.printLabel(0,  10, 24, "Int. LV1As:",     counters["oh_int_lv1a_counter"])
+        window.printLabel(0,  11, 24, "Del. LV1As:",     counters["oh_del_lv1a_counter"])
+        window.printLabel(0,  12, 24, "# LV1As:",        counters["oh_lv1a_counter"])
+        window.printLabel(27, 9,  24, "Int. Calpulses:", counters["oh_int_calpulse_counter"])
         window.printLabel(27, 10, 24, "Del. Calpulses:", counters["oh_del_calpulse_counter"])
-        window.printLabel(27, 11, 24, "# Calpulses:", counters["oh_calpulse_counter"])
-        window.printLabel(54, 9, 24, "# Resyncs:", counters["oh_resync_counter"])
-        window.printLabel(54, 10, 24, "# BC0s:", counters["oh_bc0_counter"])
-        window.printLabel(0, 14, 24, "GLIB errors:", counters["glib_error_counter"])
-        window.printLabel(0, 15, 24, "GLIB VFAT2 RX:", counters["glib_vfat2_rx_counter"])
-        window.printLabel(0, 16, 24, "GLIB VFAT2 TX:", counters["glib_vfat2_tx_counter"])
-        window.printLabel(0, 17, 24, "GLIB regs RX:", counters["glib_reg_rx_counter"])
-        window.printLabel(0, 18, 24, "GLIB regs TX:", counters["glib_reg_tx_counter"])
-        window.printLabel(27, 14, 24, "OH errors:", counters["oh_error_counter"])
-        window.printLabel(27, 15, 24, "OH VFAT2 RX:", counters["oh_vfat2_rx_counter"])
-        window.printLabel(27, 16, 24, "OH VFAT2 TX:", counters["oh_vfat2_tx_counter"])
-        window.printLabel(27, 17, 24, "OH regs RX:", counters["oh_reg_rx_counter"])
-        window.printLabel(27, 18, 24, "OH regs TX:", counters["oh_reg_tx_counter"])
+        window.printLabel(27, 11, 24, "# Calpulses:",    counters["oh_calpulse_counter"])
+        window.printLabel(54, 9,  24, "# Resyncs:",      counters["oh_resync_counter"])
+        window.printLabel(54, 10, 24, "# BC0s:",         counters["oh_bc0_counter"])
+        for i,link in enumerate(links.keys()):
+            window.printLabel(0,  14+(i*5), 24, "GLIB link%d errors:"%(link),    counters["glib_link%d_error_counter"%(link)])
+            window.printLabel(0,  15+(i*5), 24, "GLIB link%d VFAT2 RX:"%(link),  counters["glib_link%d_vfat2_rx_counter"%(link)])
+            window.printLabel(0,  16+(i*5), 24, "GLIB link%d VFAT2 TX:"%(link),  counters["glib_link%d_vfat2_tx_counter"%(link)])
+            window.printLabel(0,  17+(i*5), 24, "GLIB link%d regs RX:"%(link),   counters["glib_link%d_reg_rx_counter"%(link)])
+            window.printLabel(0,  18+(i*5), 24, "GLIB link%d regs TX:"%(link),   counters["glib_link%d_reg_tx_counter"%(link)])
+
+            window.printLabel(27, 14+(i*5), 24, "OH link%d errors:"%(links[link]),      counters["oh_link%d_error_counter"%(links[link])])
+            window.printLabel(27, 15+(i*5), 24, "OH link%d VFAT2 RX:"%(links[link]),    counters["oh_link%d_vfat2_rx_counter"%(links[link])])
+            window.printLabel(27, 16+(i*5), 24, "OH link%d VFAT2 TX:"%(links[link]),    counters["oh_link%d_vfat2_tx_counter"%(links[link])])
+            window.printLabel(27, 17+(i*5), 24, "OH link%d regs RX:"%(links[link]),     counters["oh_link%d_reg_rx_counter"%(links[link])])
+            window.printLabel(27, 18+(i*5), 24, "OH link%d regs TX:"%(links[link]),     counters["oh_link%d_reg_tx_counter"%(links[link])])
         # Manage user input
         for i in range(0, 10000000):
             select = window.getChr()
@@ -106,12 +134,13 @@ def setRegistersWindow():
     # Get all the values to show
     systemRegisters = glib.saveSystem()
     #
-    sbitSelect = window.inputIntShifted(0, 7, "SBit VFAT2 select [8-13]:", 2, 8, 13, (systemRegisters["oh_sbit_select"] + 8))
-    triggerSource = window.inputIntShifted(0, 8, "Trigger source (2) [0-2]:", 1, 0, 2, systemRegisters["oh_trigger_source"])
-    vfat2Clk = window.inputIntShifted(0, 10, "VFAT2 Clock (1) [0-1]:", 1, 0, 1, systemRegisters["oh_vfat2_src_select"])
-    cdceClk = window.inputIntShifted(0, 11, "CDCE Clock (1) [0-1]:", 1, 0, 1, systemRegisters["oh_cdce_src_select"])
-    vfat2Fallback = window.inputIntShifted(0, 13, "VFAT2 fallback (0) [0-1]:", 1, 0, 1, systemRegisters["oh_vfat2_fallback"])
-    cdceFallback = window.inputIntShifted(0, 14, "CDCE fallback (0) [0-1]:", 1, 0, 1, systemRegisters["oh_cdce_fallback"])
+    sbitSelect        = window.inputIntShifted(0, 7, "SBit VFAT2 select [8-13]:",      2, 8, 13, (systemRegisters["oh_sbit_select"] + 8))
+    triggerSourceOH   = window.inputIntShifted(0,  8, "OH Trg src (2) [0-2]:",     1, 0, 2, systemRegisters["oh_trigger_source"])
+    triggerSourceGLIB = window.inputIntShifted(0,  9, "GLIB Trg src (2) [0-2]:",   1, 0, 2, systemRegisters["glib_trigger_source"])
+    vfat2Clk          = window.inputIntShifted(0, 10, "VFAT2 Clock (1) [0-1]:",    1, 0, 1, systemRegisters["oh_vfat2_src_select"])
+    cdceClk           = window.inputIntShifted(0, 11, "CDCE Clock (1) [0-1]:",     1, 0, 1, systemRegisters["oh_cdce_src_select"])
+    vfat2Fallback     = window.inputIntShifted(0, 13, "VFAT2 fallback (0) [0-1]:", 1, 0, 1, systemRegisters["oh_vfat2_fallback"])
+    cdceFallback      = window.inputIntShifted(0, 14, "CDCE fallback (0) [0-1]:",  1, 0, 1, systemRegisters["oh_cdce_fallback"])
     #
     window.printLine(-1, "Apply the changes? [y]es, [n]o", "Options")
     #
@@ -120,14 +149,20 @@ def setRegistersWindow():
         if (pressedKey == ord('n')): return
         elif (pressedKey == ord('y')): break
     #
-    if (triggerSource != systemRegisters["oh_trigger_source"]): glib.set("oh_trigger_source", triggerSource)
+    if (triggerSourceOH != systemRegisters["oh_trigger_source"]):
+	    glib.setOHTriggerSource(triggerSourceOH)
+    if (triggerSourceGLIB != systemRegisters["glib_trigger_source"]):
+	    glib.setGLIBTriggerSource(triggerSourceGLIB)
     if (sbitSelect != systemRegisters["oh_sbit_select"]):
-        glib.set("oh_sbit_select", (sbitSelect - 8))
-        glib.set("glib_sbit_select", (sbitSelect - 8))
-    if (vfat2Clk != systemRegisters["oh_vfat2_src_select"]): glib.set("oh_vfat2_src_select", vfat2Clk)
-    if (cdceClk != systemRegisters["oh_cdce_src_select"]): glib.set("oh_cdce_src_select", cdceClk)
-    if (vfat2Fallback != systemRegisters["oh_vfat2_fallback"]): glib.set("oh_vfat2_fallback", vfat2Fallback)
-    if (cdceFallback != systemRegisters["oh_cdce_fallback"]): glib.set("oh_cdce_fallback", cdceFallback)
+	    glib.setSBitSource(sbitSelect - 8)
+    if (vfat2Clk != systemRegisters["oh_vfat2_src_select"]):
+	    glib.setVFATClkSrc(vfat2Clk)
+    if (cdceClk  != systemRegisters["oh_cdce_src_select"]):
+	    glib.setCDCEClkSrc(cdceClk)
+    if (vfat2Fallback != systemRegisters["oh_vfat2_fallback"]):
+	    glib.setVFATClkBkp(vfat2Fallback)
+    if (cdceFallback  != systemRegisters["oh_cdce_fallback"]):
+	    glib.setCDCEClkBkp(cdceFallback)
     #
     newRegisters = glib.saveSystem()
     # Log
@@ -140,7 +175,7 @@ def setRegistersWindow():
     #
     window.printLine(-1, "Settings applied!", "Success")
     #
-    time.sleep(2)
+    time.sleep(0.5)
 
 #########################################
 #   Reset the counters                  #
@@ -163,9 +198,9 @@ def resetCountersWindow():
     #
     glib.resetCounters()
     #
-    window.printLine(-1, "Counters reseted!", "Success")
+    window.printLine(-1, "Counters reset!", "Success")
     #
-    time.sleep(2)
+    time.sleep(0.5)
 
 #########################################
 #   Set defaults                        #
@@ -188,13 +223,7 @@ def setDefaultsWindow():
     #
     systemRegisters = glib.saveSystem()
     #
-    glib.set("oh_trigger_source", 2)
-    glib.set("oh_sbit_select", 0)
-    glib.set("glib_sbit_select", 0)
-    glib.set("oh_vfat2_src_select", 1)
-    glib.set("oh_cdce_src_select", 1)
-    glib.set("oh_vfat2_fallback", 0)
-    glib.set("oh_cdce_fallback", 0)
+    glib.systemDefault()
     #
     newRegisters = glib.saveSystem()
     # Log
@@ -207,7 +236,7 @@ def setDefaultsWindow():
     #
     window.printLine(-1, "Registers set!", "Success")
     #
-    time.sleep(2)
+    time.sleep(0.5)
 
 #########################################
 #   Main program                        #

@@ -423,59 +423,60 @@ glib_firmware_version_2         40040282    ffffffff     1     0
 *------------------------------------------------------------------------------------------
 * OptoHybrid registers
 *------------------------------------------------------------------------------------------
+* changed to 301 from 302 as these register highly depend on the OH link, which is the 
+* wrong way to do this
+oh_error_counter                40030100    ffffffff     1     0
+oh_vfat2_rx_counter             40030101    ffffffff     1     0
+oh_vfat2_tx_counter             40030102    ffffffff     1     0
+oh_reg_rx_counter               40030103    ffffffff     1     0
+oh_reg_tx_counter               40030104    ffffffff     1     0
 
-oh_error_counter                40030200    ffffffff     1     0
-oh_vfat2_rx_counter             40030201    ffffffff     1     0
-oh_vfat2_tx_counter             40030202    ffffffff     1     0
-oh_reg_rx_counter               40030203    ffffffff     1     0
-oh_reg_tx_counter               40030204    ffffffff     1     0
+oh_reset_error_counter          40030105    ffffffff     0     1
+oh_reset_vfat2_rx_counter       40030106    ffffffff     0     1
+oh_reset_vfat2_tx_counter       40030107    ffffffff     0     1
+oh_reset_reg_rx_counter         40030108    ffffffff     0     1
+oh_reset_reg_tx_counter         40030109    ffffffff     0     1
 
-oh_reset_error_counter          40030205    ffffffff     0     1
-oh_reset_vfat2_rx_counter       40030206    ffffffff     0     1
-oh_reset_vfat2_tx_counter       40030207    ffffffff     0     1
-oh_reset_reg_rx_counter         40030208    ffffffff     0     1
-oh_reset_reg_tx_counter         40030209    ffffffff     0     1
+oh_lv1a                         40030140    ffffffff     0     1
+oh_calpulse                     40030141    ffffffff     0     1
+oh_resync                       40030142    ffffffff     0     1
+oh_bc0                          40030143    ffffffff     0     1
+oh_lv1a_and_calpulse            40030144    ffffffff     0     1
+oh_trigger_source               40030145    ffffffff     1     1
+oh_sbit_select                  40030146    ffffffff     1     1
 
-oh_lv1a                         40030240    ffffffff     0     1
-oh_calpulse                     40030241    ffffffff     0     1
-oh_resync                       40030242    ffffffff     0     1
-oh_bc0                          40030243    ffffffff     0     1
-oh_lv1a_and_calpulse            40030244    ffffffff     0     1
-oh_trigger_source               40030245    ffffffff     1     1
-oh_sbit_select                  40030246    ffffffff     1     1
+oh_vfat2_src_select             4003014b    ffffffff     1     1
+oh_vfat2_fallback               4003014c    ffffffff     1     1
+oh_cdce_src_select              4003014d    ffffffff     1     1
+oh_cdce_fallback                4003014e    ffffffff     1     1
+oh_fpga_pll_locked              4003014f    ffffffff     1     0
+oh_cdce_pll_locked              40030150    ffffffff     1     0
+oh_rec_pll_locked               40030151    ffffffff     1     0
 
-oh_vfat2_src_select             4003024b    ffffffff     1     1
-oh_vfat2_fallback               4003024c    ffffffff     1     1
-oh_cdce_src_select              4003024d    ffffffff     1     1
-oh_cdce_fallback                4003024e    ffffffff     1     1
-oh_fpga_pll_locked              4003024f    ffffffff     1     0
-oh_cdce_pll_locked              40030250    ffffffff     1     0
-oh_rec_pll_locked               40030251    ffffffff     1     0
+oh_adc_v                        40030155    ffffffff     1     0
+oh_adc_i                        40030156    ffffffff     1     0
+oh_firmware_version             40030157    ffffffff     1     0
 
-oh_adc_v                        40030255    ffffffff     1     0
-oh_adc_i                        40030256    ffffffff     1     0
-oh_firmware_version             40030257    ffffffff     1     0
+oh_ext_lv1a_counter             4003015a    ffffffff     1     0
+oh_int_lv1a_counter             4003015b    ffffffff     1     0
+oh_del_lv1a_counter             4003015c    ffffffff     1     0
+oh_lv1a_counter                 4003015d    ffffffff     1     0
+oh_int_calpulse_counter         4003015e    ffffffff     1     0
+oh_del_calpulse_counter         4003015f    ffffffff     1     0
+oh_calpulse_counter             40030160    ffffffff     1     0
+oh_resync_counter               40030161    ffffffff     1     0
+oh_bc0_counter                  40030162    ffffffff     1     0
+oh_bx_counter                   40030163    ffffffff     1     0
 
-oh_ext_lv1a_counter             4003025a    ffffffff     1     0
-oh_int_lv1a_counter             4003025b    ffffffff     1     0
-oh_del_lv1a_counter             4003025c    ffffffff     1     0
-oh_lv1a_counter                 4003025d    ffffffff     1     0
-oh_int_calpulse_counter         4003025e    ffffffff     1     0
-oh_del_calpulse_counter         4003025f    ffffffff     1     0
-oh_calpulse_counter             40030260    ffffffff     1     0
-oh_resync_counter               40030261    ffffffff     1     0
-oh_bc0_counter                  40030262    ffffffff     1     0
-oh_bx_counter                   40030263    ffffffff     1     0
-
-oh_reset_ext_lv1a_counter       40030266    ffffffff     0     1
-oh_reset_int_lv1a_counter       40030267    ffffffff     0     1
-oh_reset_del_lv1a_counter       40030268    ffffffff     0     1
-oh_reset_lv1a_counter           40030269    ffffffff     0     1
-oh_reset_int_calpulse_counter   4003026a    ffffffff     0     1
-oh_reset_del_calpulse_counter   4003026b    ffffffff     0     1
-oh_reset_calpulse_counter       4003026c    ffffffff     0     1
-oh_reset_resync_counter         4003026d    ffffffff     0     1
-oh_reset_bc0_counter            4003026e    ffffffff     0     1
+oh_reset_ext_lv1a_counter       40030166    ffffffff     0     1
+oh_reset_int_lv1a_counter       40030167    ffffffff     0     1
+oh_reset_del_lv1a_counter       40030168    ffffffff     0     1
+oh_reset_lv1a_counter           40030169    ffffffff     0     1
+oh_reset_int_calpulse_counter   4003016a    ffffffff     0     1
+oh_reset_del_calpulse_counter   4003016b    ffffffff     0     1
+oh_reset_calpulse_counter       4003016c    ffffffff     0     1
+oh_reset_resync_counter         4003016d    ffffffff     0     1
+oh_reset_bc0_counter            4003016e    ffffffff     0     1
 
 ************* VFAT2 #0*************
 

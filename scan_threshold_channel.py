@@ -1,7 +1,33 @@
+#!/bin/env python
+
 # System imports
 import time
 from kernel import *
 import matplotlib.pyplot as plt
+
+
+import uhal
+
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-s", "--slot", type="int", dest="slot",
+		  help="slot in uTCA crate", metavar="slot", default=4)
+
+parser.add_option("-o", "--links", type="string", dest="activeLinks", action='append',
+		  help="pair of connected optical links (GLIB,OH)", metavar="activeLinks", default=[])
+(options, args) = parser.parse_args()
+
+links = {}
+for link in options.activeLinks:
+	pair = map(int, link.split(","))
+	links[pair[0]] = pair[1]
+print "links", links
+
+uhal.setLogLevelTo( uhal.LogLevel.FATAL )
+
+if not links.keys():
+    print "No optical links specified, exiting"
+    exit(1)
 
 def stripMapping(vfat2Strips):
     # Mapping
@@ -20,7 +46,7 @@ def stripMapping(vfat2Strips):
 window = Window("Scan a VFAT2's threshold by channel")
 
 # Get GLIB access
-glib = GLIB()
+glib = GLIB(options.slot,links)
 glib.setWindow(window)
 
 #########################################
@@ -56,7 +82,7 @@ while (True):
         # Error
         window.printLine(3, "The selected VFAT2 is not running!", "Error")
         # Timeout
-        time.sleep(3)
+        time.sleep(0.5)
     else: break
 
 # Limits select
@@ -95,18 +121,19 @@ save.writeLine("--- Data points ---")
 for threshold in range(minimumValue, maximumValue):
 
     # Set threshold
-    glib.setVFAT2(vfat2ID, "vthreshold1", threshold)
-
-    # Send Resync signal
-    glib.set("oh_resync", 1)
-
-    # Empty tracking fifo
-    glib.set("glib_empty_trigger_data", 1)
-
+    glib.setVFAT2(vfat2ID, "VThreshold1", threshold)
+    glib.disableVFAT2(vfat2ID)
     # Efficiency variable
     hitCount = 0.
     event = 0.
 
+    # Send Resync signal
+    glib.sendResync()
+
+    # Empty tracking fifo
+    glib.flushFIFO()
+
+    glib.enableVFAT2(vfat2ID)
     # Read tracking packets
     while (event < nEvents):
 
@@ -116,14 +143,14 @@ for threshold in range(minimumValue, maximumValue):
 
         # Get a tracking packet (with a limit)
         while (True):
-            if (glib.get("glib_request_tracking_data") == 0x1): break
-            else: glib.set("oh_lv1a", 1)
+            if (glib.hasData() == 0x1): break
+            else: glib.sendL1A()
 
-        packet1 = glib.get("glib_tracking_data_1")
-        packet2 = glib.get("glib_tracking_data_2")
-        packet3 = glib.get("glib_tracking_data_3")
-        packet4 = glib.get("glib_tracking_data_4")
-        packet5 = glib.get("glib_tracking_data_5")
+        packet1 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.1")
+        packet2 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.2")
+        packet3 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.3")
+        packet4 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.4")
+        packet5 = glib.get("OptoHybrid.OptoHybrid.GEB.TRK_DATA.COL1.DATA.5")
 
         # Check Chipid
         chipid = (0x00ff0000 & packet5) >> 16
