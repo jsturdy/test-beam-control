@@ -146,6 +146,23 @@ class Window():
 
 
     #####################################
+    #   Print an info and quit         #
+    #####################################
+
+    # Print info
+    def printInfo(self, string):
+        # Get the screen size
+        height, width = self.window.getmaxyx()
+        # Print the string
+        self.printString(0, height - 4, string, "Info")
+        #
+        time.sleep(0.5)
+        #
+        self.printString(0, height - 4, (" " * len(string)))
+
+
+
+    #####################################
     #   Print an error and quit         #
     #####################################
 
@@ -156,7 +173,7 @@ class Window():
         # Print the string
         self.printString(0, height - 2, string, "Error")
         #
-        time.sleep(1)
+        time.sleep(0.5)
         #
         self.printString(0, height - 2, (" " * len(string)))
 
